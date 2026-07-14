@@ -25572,7 +25572,8 @@ function confirmEscalation() {
 </script>
 </div><!-- end app-root -->
 
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"
+        onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';document.head.appendChild(s);"></script>
 <script>
 /* ═══ MICROSOFT 365 SIGN-IN (MSAL) — replaces client-side password ═══ */
 (function() {
@@ -25585,56 +25586,75 @@ function confirmEscalation() {
     cache: { cacheLocation: 'sessionStorage' }
   };
   const SP_SCOPE = ['https://environmentnswgov.sharepoint.com/Sites.ReadWrite.All'];
-  const msalApp  = new msal.PublicClientApplication(MSAL_CONFIG);
+  let msalApp = null;
+
+  function showErr(msg){
+    const el=document.getElementById('login-error');
+    if(el){ el.textContent=msg; el.style.display='block'; }
+  }
+
+  function getApp() {
+    if (msalApp) return msalApp;
+    if (typeof msal === 'undefined') {
+      showErr('Microsoft sign-in library could not load. Check your network connection and refresh the page.');
+      return null;
+    }
+    msalApp = new msal.PublicClientApplication(MSAL_CONFIG);
+    return msalApp;
+  }
 
   function reveal() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-root').style.display = 'contents';
   }
 
-  async function acquireToken(account) {
+  async function acquireToken(app, account) {
     try {
-      const res = await msalApp.acquireTokenSilent({ scopes: SP_SCOPE, account });
+      const res = await app.acquireTokenSilent({ scopes: SP_SCOPE, account });
       return res.accessToken;
     } catch(e) {
-      const res = await msalApp.acquireTokenPopup({ scopes: SP_SCOPE });
+      const res = await app.acquireTokenPopup({ scopes: SP_SCOPE });
       return res.accessToken;
     }
   }
 
   async function doLogin() {
-    document.getElementById('login-error').style.display = 'none';
+    const errEl = document.getElementById('login-error');
+    if (errEl) errEl.style.display = 'none';
+    const app = getApp();
+    if (!app) return;
     try {
-      await msalApp.initialize();
-      let accounts = msalApp.getAllAccounts();
+      await app.initialize();
+      let accounts = app.getAllAccounts();
       if (accounts.length === 0) {
-        await msalApp.loginPopup({ scopes: SP_SCOPE });
-        accounts = msalApp.getAllAccounts();
+        await app.loginPopup({ scopes: SP_SCOPE });
+        accounts = app.getAllAccounts();
       }
-      SP.token = await acquireToken(accounts[0]);
-      // Refresh token in the background every 45 minutes
-      setInterval(async () => { try { SP.token = await acquireToken(msalApp.getAllAccounts()[0]); } catch(e){} }, 45*60*1000);
+      SP.token = await acquireToken(app, accounts[0]);
+      setInterval(async () => { try { SP.token = await acquireToken(app, app.getAllAccounts()[0]); } catch(e){} }, 45*60*1000);
       reveal();
     } catch(e) {
-      document.getElementById('login-error').style.display = 'block';
+      showErr('Sign-in failed or was cancelled: ' + (e.errorCode || e.message || 'unknown error') + '. If a popup was blocked, allow popups for this site and try again.');
     }
   }
 
   window.doLogin = doLogin;
 
-  // Auto sign-in if a session already exists
-  (async () => {
+  // Auto sign-in if a session already exists (waits for library to be ready)
+  window.addEventListener('load', async () => {
+    const app = getApp();
+    if (!app) return;
     try {
-      await msalApp.initialize();
-      await msalApp.handleRedirectPromise().catch(()=>{});
-      const accounts = msalApp.getAllAccounts();
+      await app.initialize();
+      await app.handleRedirectPromise().catch(()=>{});
+      const accounts = app.getAllAccounts();
       if (accounts.length > 0) {
-        SP.token = await acquireToken(accounts[0]);
-        setInterval(async () => { try { SP.token = await acquireToken(msalApp.getAllAccounts()[0]); } catch(e){} }, 45*60*1000);
+        SP.token = await acquireToken(app, accounts[0]);
+        setInterval(async () => { try { SP.token = await acquireToken(app, app.getAllAccounts()[0]); } catch(e){} }, 45*60*1000);
         reveal();
       }
     } catch(e) { /* stay on sign-in screen */ }
-  })();
+  });
 })();
 </script>
 
