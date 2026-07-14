@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRAR Risk Management Hub — Learning &amp; Capability</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* NSW palette — shared with the Risk Register so the two demo as one family */
+  --navy:#002664; --navy2:#001a4a; --blue02:#146cfd; --blue03:#8ce0ff; --blue04:#cbedfd;
+  --teal01:#0b3f47; --teal02:#2e808e; --teal03:#8cdbe5; --teal04:#d1eeea;
+  --white:#ffffff; --off:#f4f6f9; --border:#cdd3d6; --muted:#495054; --dark:#22272b;
+  /* Learning identity — teal is the hub's "progress/learn" accent (register uses red for alerts) */
+  --accent:#2e808e; --accent-dk:#0b3f47; --accent-lt:#d1eeea; --accent-pale:#eef7f6;
+  /* Risk rating colours — identical to the register */
+  --critical:#d7153a; --critical-lt:#ffe6ea;
+  --high:#e8610a; --high-lt:#fde8d8;
+  --medium:#7a5500; --medium-lt:#fff3cc; --medium-vivid:#faaf05;
+  --low:#0b3f47; --low-lt:#d1eeea; --low-mid:#2e808e;
+  --sidebar:238px; --radius:8px;
+  --shadow:0 2px 12px rgba(0,38,100,0.10); --shadow-lg:0 8px 32px rgba(0,38,100,0.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Public Sans',sans-serif;font-weight:300;background:var(--off);color:var(--dark);min-height:100vh;display:flex;font-size:14px;align-items:flex-start}
+h1,h2,h3,h4{font-weight:600}
+a{color:var(--blue02);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- SIDEBAR ---------- */
+#sidebar{width:var(--sidebar);min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;z-index:100}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-logo .org{font-size:10px;font-weight:600;color:var(--blue03);letter-spacing:2px;text-transform:uppercase}
+.sidebar-logo .title{font-size:15px;font-weight:700;color:#fff;margin-top:3px;line-height:1.3}
+.sidebar-logo .sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;font-style:italic}
+.nav-section{padding:10px 0 4px}
+.nav-label{font-size:9px;font-weight:700;color:rgba(255,255,255,0.32);letter-spacing:1.5px;text-transform:uppercase;padding:4px 16px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;color:rgba(255,255,255,0.58);font-size:12.5px;font-weight:500;transition:all .15s;border-left:3px solid transparent;margin:1px 0}
+.nav-item:hover{background:rgba(46,128,142,0.16);color:#fff;text-decoration:none}
+.nav-item.active{background:rgba(46,128,142,0.24);color:var(--teal03);border-left-color:var(--teal02)}
+.nav-item .icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-item .num{font-family:ui-monospace,monospace;font-size:10px;color:rgba(255,255,255,0.32);width:18px;text-align:center;flex-shrink:0;font-weight:700}
+.nav-item.active .num{color:var(--teal03)}
+.nav-item .done{margin-left:auto;color:var(--teal03);font-size:12px;opacity:0;transition:opacity .2s}
+.nav-item.completed .done{opacity:1}
+.sidebar-bottom{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.08)}
+.prog-wrap{font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:8px}
+.prog-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal02),var(--teal03));width:0;transition:width .5s ease}
+.sidebar-btn{width:100%;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;margin-top:6px;transition:all .15s;font-family:'Public Sans',sans-serif;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7)}
+.sidebar-btn:hover{background:rgba(255,255,255,0.12);color:#fff}
+.version{font-size:9px;color:rgba(255,255,255,0.25);margin-top:8px}
+
+/* ---------- MAIN ---------- */
+#main{flex:1;min-width:0;max-width:calc(100vw - var(--sidebar))}
+.page{display:none;padding:26px 34px;max-width:1120px;animation:fade .25s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-header{margin-bottom:22px}
+.eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:6px}
+.page-header h1{font-size:23px;font-weight:700;color:var(--navy);line-height:1.2}
+.page-header p{color:var(--muted);margin-top:5px;font-size:13px;max-width:70ch;line-height:1.5}
+
+/* cards */
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.card-header{padding:13px 18px;background:var(--navy);display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:12.5px;font-weight:700;color:#fff;letter-spacing:.3px;text-transform:uppercase}
+.card-header .src{font-size:9.5px;color:var(--blue03);font-weight:600;letter-spacing:.5px}
+.card-body{padding:18px}
+.card-body p{line-height:1.6;margin-bottom:10px}
+.card-body p:last-child{margin-bottom:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:'Public Sans',sans-serif}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dk)}
+.btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-lg{padding:12px 22px;font-size:14px}
+
+.source-tag{display:inline-block;font-size:10px;font-weight:700;color:var(--accent-dk);background:var(--accent-lt);padding:2px 8px;border-radius:20px;letter-spacing:.3px;vertical-align:middle}
+.note{background:var(--accent-pale);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:12.5px;line-height:1.55;color:var(--dark);margin:12px 0}
+.note strong{color:var(--accent-dk)}
+
+/* rating chips */
+.chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
+.chip.critical{background:var(--critical-lt);color:var(--critical)}
+.chip.high{background:var(--high-lt);color:var(--high)}
+.chip.medium{background:var(--medium-lt);color:var(--medium)}
+.chip.low{background:var(--low-lt);color:var(--low)}
+.chip.vlow{background:#e6f0f2;color:var(--teal01)}
+
+/* tables */
+table.tbl{width:100%;border-collapse:collapse;font-size:12px}
+table.tbl th{background:var(--off);text-align:left;padding:9px 11px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border)}
+table.tbl td{padding:9px 11px;border-bottom:1px solid var(--border);line-height:1.45;vertical-align:top}
+table.tbl tr:last-child td{border-bottom:none}
+table.tbl td.fw{font-weight:600;color:var(--navy)}
+
+/* ---------- HOME ---------- */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);border-radius:12px;padding:34px 36px;color:#fff;position:relative;overflow:hidden;margin-bottom:24px}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(46,128,142,0.05) 40px,rgba(46,128,142,0.05) 80px)}
+.hero-inner{position:relative;display:flex;gap:34px;align-items:center;flex-wrap:wrap}
+.hero-copy{flex:1;min-width:300px}
+.hero .eyebrow{color:var(--teal03)}
+.hero h1{font-size:30px;line-height:1.15;font-weight:700;margin-bottom:12px}
+.hero p{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.6;max-width:52ch;margin-bottom:18px}
+.hero .btn-primary{background:var(--teal03);color:var(--navy)}
+.hero .btn-primary:hover{background:#fff}
+.hero .btn-secondary{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.25)}
+.hero .btn-secondary:hover{background:rgba(255,255,255,0.16);color:#fff}
+
+/* signature: live mini rating grid in hero */
+.mini-rate{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:10px;padding:18px;width:290px;flex-shrink:0}
+.mini-rate .mr-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal03);margin-bottom:10px}
+.mr-axis{font-size:8.5px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.mr-cell{aspect-ratio:1;border-radius:3px;cursor:pointer;transition:transform .1s,box-shadow .1s;opacity:.32}
+.mr-cell:hover{transform:scale(1.12);opacity:.7}
+.mr-cell.on{opacity:1;box-shadow:0 0 0 2px #fff,0 0 10px rgba(255,255,255,0.5);transform:scale(1.08)}
+.mr-cell.c-critical{background:var(--critical)}.mr-cell.c-high{background:var(--high)}.mr-cell.c-medium{background:var(--medium-vivid)}.mr-cell.c-low{background:var(--low-mid)}
+.mr-out{margin-top:12px;text-align:center;font-size:11px;color:rgba(255,255,255,0.7);min-height:34px}
+.mr-out b{display:block;font-size:18px;font-weight:700;letter-spacing:.5px;margin-top:2px}
+
+/* pathway cards */
+.path-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px}
+@media(max-width:900px){.path-grid{grid-template-columns:1fr}}
+.path-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;cursor:pointer;transition:all .18s;position:relative}
+.path-card:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.path-card .p-ico{font-size:26px;margin-bottom:10px}
+.path-card h3{font-size:15px;color:var(--navy);margin-bottom:6px}
+.path-card p{font-size:12px;color:var(--muted);line-height:1.5}
+.path-card .p-modules{font-size:10.5px;font-weight:700;color:var(--accent);margin-top:12px;text-transform:uppercase;letter-spacing:.5px}
+
+/* non-negotiables */
+.nn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.nn-grid{grid-template-columns:1fr}}
+.nn{display:flex;gap:12px;padding:14px;background:#fff;border:1px solid var(--border);border-radius:8px}
+.nn .nn-n{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.nn h4{font-size:13px;color:var(--navy);margin-bottom:3px}
+.nn p{font-size:11.5px;color:var(--muted);line-height:1.45;margin:0}
+
+/* module page */
+.mod-hero{display:flex;align-items:center;gap:20px;background:linear-gradient(135deg,var(--accent-dk),var(--teal02));border-radius:10px;padding:22px 26px;color:#fff;margin-bottom:22px}
+.mod-hero .m-num{font-family:ui-monospace,monospace;font-size:40px;font-weight:700;opacity:.55;line-height:1}
+.mod-hero h1{font-size:22px;font-weight:700;line-height:1.2}
+.mod-hero p{font-size:12.5px;color:rgba(255,255,255,0.8);margin-top:4px}
+.learn-obj{background:var(--accent-pale);border:1px dashed var(--accent);border-radius:8px;padding:14px 18px;margin-bottom:20px}
+.learn-obj .lo-t{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent-dk);margin-bottom:8px}
+.learn-obj ul{margin:0;padding-left:18px}
+.learn-obj li{font-size:12.5px;line-height:1.7;color:var(--dark)}
+.mod-nav{display:flex;justify-content:space-between;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* flip / term cards */
+.term-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:760px){.term-grid{grid-template-columns:1fr}}
+.flip{background:transparent;perspective:1000px;height:130px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--border)}
+.flip-front{background:#fff}
+.flip-front .t-term{font-size:15px;font-weight:700;color:var(--navy)}
+.flip-front .t-hint{font-size:10px;color:var(--accent);margin-top:6px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.flip-back{background:var(--navy);color:#fff;transform:rotateY(180deg)}
+.flip-back p{font-size:12px;line-height:1.5;color:rgba(255,255,255,0.9);margin:0}
+
+/* PIRI wheel */
+.piri-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:center}
+@media(max-width:820px){.piri-wrap{grid-template-columns:1fr}}
+.piri-svg{width:100%;max-width:320px;margin:0 auto;display:block}
+.piri-seg{cursor:pointer;transition:opacity .2s}
+.piri-seg:hover{opacity:.85}
+.piri-detail{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;min-height:200px}
+.piri-detail .pd-phase{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.piri-detail h3{font-size:17px;color:var(--navy);margin-bottom:8px}
+.piri-detail p{font-size:12.5px;line-height:1.6;color:var(--muted)}
+.piri-detail .pd-iso{font-size:11px;color:var(--accent-dk);margin-top:10px;font-style:italic}
+
+/* interactive matrix */
+.matrix-tool{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:center}
+.mx-yaxis{writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:center}
+.mx-grid{display:grid;grid-template-columns:110px repeat(5,1fr);gap:4px}
+.mx-corner{font-size:8.5px;color:var(--muted);display:flex;align-items:flex-end}
+.mx-colh,.mx-rowh{font-size:10px;font-weight:600;color:var(--navy);text-align:center;padding:5px 2px;line-height:1.2}
+.mx-rowh{text-align:right;padding-right:8px;display:flex;align-items:center;justify-content:flex-end}
+.mx-cell{aspect-ratio:1.7;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;cursor:pointer;transition:all .12s;text-transform:uppercase;color:#fff;position:relative}
+.mx-cell:hover{transform:scale(1.06);z-index:2;box-shadow:var(--shadow)}
+.mx-cell.sel{box-shadow:0 0 0 3px var(--navy),var(--shadow-lg);z-index:3}
+.mx-cell.dim{opacity:.4}
+.cell-critical{background:var(--critical)}.cell-high{background:var(--high)}.cell-medium{background:var(--medium-vivid);color:#5a3d00}.cell-low{background:var(--low-mid)}
+.cell-effective{background:var(--teal02)}.cell-subeff{background:var(--teal03);color:var(--teal01)}.cell-parteff{background:var(--medium-vivid);color:#5a3d00}.cell-ineffective{background:var(--critical)}
+.mx-readout{margin-top:16px;background:var(--off);border-radius:8px;padding:16px;text-align:center;min-height:88px;display:flex;flex-direction:column;justify-content:center}
+.mx-readout .ro-pick{font-size:11px;color:var(--muted)}
+.mx-readout .ro-band{font-size:22px;font-weight:700;margin:4px 0;letter-spacing:.5px}
+.mx-readout .ro-say{font-size:12px;color:var(--muted);line-height:1.5;max-width:60ch;margin:0 auto}
+
+/* appetite table */
+.app-row td:first-child{font-weight:600;color:var(--navy);width:34%}
+
+/* quiz */
+.quiz-q{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:14px}
+.quiz-q .q-num{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
+.quiz-q .q-text{font-size:14px;font-weight:600;color:var(--navy);margin:6px 0 12px;line-height:1.4}
+.q-opt{display:block;width:100%;text-align:left;padding:11px 14px;border:1.5px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font-size:12.5px;margin-bottom:8px;transition:all .12s;font-family:inherit;line-height:1.4}
+.q-opt:hover{border-color:var(--accent)}
+.q-opt.correct{border-color:var(--teal02);background:var(--accent-lt);color:var(--teal01);font-weight:600}
+.q-opt.wrong{border-color:var(--critical);background:var(--critical-lt);color:var(--critical)}
+.q-opt.locked{cursor:default;pointer-events:none}
+.q-exp{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:8px;padding:10px 12px;background:var(--off);border-radius:6px;display:none}
+.q-exp.show{display:block}
+.quiz-score{background:var(--navy);color:#fff;border-radius:10px;padding:24px;text-align:center;margin-bottom:18px;display:none}
+.quiz-score.show{display:block}
+.quiz-score .qs-n{font-size:40px;font-weight:700;color:var(--teal03)}
+.quiz-score p{color:rgba(255,255,255,0.75);font-size:13px;margin-top:4px}
+
+/* glossary */
+.gloss-search{width:100%;padding:11px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;margin-bottom:16px}
+.gloss-search:focus{border-color:var(--accent)}
+.gloss-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
+.gloss-item .g-term{font-size:13.5px;font-weight:700;color:var(--navy)}
+.gloss-item .g-def{font-size:12px;color:var(--muted);line-height:1.55;margin-top:4px}
+.gloss-empty{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+
+/* category explorer */
+.cat-list{display:flex;flex-direction:column;gap:8px}
+.cat-item{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.cat-head{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;transition:background .15s}
+.cat-head:hover{background:var(--off)}
+.cat-num{font-family:ui-monospace,monospace;font-size:14px;font-weight:700;color:var(--accent);width:26px;flex-shrink:0}
+.cat-name{flex:1;font-size:14px;font-weight:600;color:var(--navy)}
+.cat-app{display:flex;gap:6px;flex-shrink:0}
+.cat-arrow{color:var(--muted);transition:transform .2s;font-size:12px}
+.cat-item.open .cat-arrow{transform:rotate(90deg)}
+.cat-body{display:none;padding:0 16px 16px 56px;font-size:12px}
+.cat-item.open .cat-body{display:block}
+.cat-body .cb-what{color:var(--muted);font-style:italic;margin-bottom:10px;line-height:1.5}
+.named-risk{padding:8px 0;border-top:1px solid var(--border)}
+.named-risk .nr-t{font-weight:600;color:var(--navy);font-size:12.5px}
+.named-risk .nr-d{color:var(--muted);line-height:1.45;margin-top:2px}
+.instrument-flag{display:inline-block;font-size:9.5px;font-weight:700;background:var(--medium-lt);color:var(--medium);padding:1px 7px;border-radius:12px;margin-left:6px}
+
+/* links row */
+.link-card{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;transition:all .15s;cursor:pointer}
+.link-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.link-card .lc-ico{font-size:24px}
+.link-card h4{font-size:13.5px;color:var(--navy)}
+.link-card p{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+.demo-banner{background:var(--medium-lt);color:var(--medium);font-size:11px;font-weight:600;text-align:center;padding:6px;letter-spacing:.3px}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <div class="org">NRAR</div>
+    <div class="title">Risk Management Hub</div>
+    <div class="sub">Learning &amp; capability</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Start here</div>
+    <div class="nav-item active" data-page="home" onclick="go('home')"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" data-page="pathways" onclick="go('pathways')"><span class="icon">🧭</span>Learning pathways</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Core modules</div>
+    <div class="nav-item" data-page="m1" onclick="go('m1')"><span class="num">01</span>Risk fundamentals<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m2" onclick="go('m2')"><span class="num">02</span>The PIRI process<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m3" onclick="go('m3')"><span class="num">03</span>Rating a risk<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m4" onclick="go('m4')"><span class="num">04</span>Controls &amp; effectiveness<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m5" onclick="go('m5')"><span class="num">05</span>Appetite &amp; tolerance<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m6" onclick="go('m6')"><span class="num">06</span>Treatment &amp; acceptance<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m7" onclick="go('m7')"><span class="num">07</span>Taxonomy, registers &amp; roles<span class="done">✓</span></div>
+    <div class="nav-item" data-page="m8" onclick="go('m8')"><span class="num">08</span>Special cases: AI &amp; cultural values<span class="done">✓</span></div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Practise</div>
+    <div class="nav-item" data-page="simulator" onclick="go('simulator')"><span class="icon">🎯</span>Rating simulator</div>
+    <div class="nav-item" data-page="scenario" onclick="go('scenario')"><span class="icon">🧪</span>Worked scenario</div>
+    <div class="nav-item" data-page="quiz" onclick="go('quiz')"><span class="icon">✅</span>Knowledge check</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Reference</div>
+    <div class="nav-item" data-page="categories" onclick="go('categories')"><span class="icon">🗂</span>Category explorer</div>
+    <div class="nav-item" data-page="glossary" onclick="go('glossary')"><span class="icon">📖</span>Glossary</div>
+    <div class="nav-item" data-page="links" onclick="go('links')"><span class="icon">🔗</span>Source documents</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="prog-wrap">
+      <span id="prog-text">0 of 8 modules</span>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+    <button class="sidebar-btn" onclick="resetProgress()">Reset progress</button>
+    <div class="version">Hub v1.0 · aligned to RMF Draft 15 Jun 2026 · Appendices v0.5</div>
+  </div>
+</div>
+
+<div id="main">
+<div class="demo-banner">DEMO BUILD · content for training and review · not the controlled RMF of record</div>
+<!-- ============ HOME ============ -->
+<div class="page active" id="page-home">
+  <div class="hero"><div class="hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow">NRAR Risk Management Framework</div>
+      <h1>Managing risk is how we make sound regulatory decisions.</h1>
+      <p>Risk management at NRAR is not a separate compliance exercise — it is how we make defensible decisions and protect the outcomes we exist to deliver. This hub teaches you the framework, then lets you practise it.</p>
+      <button class="btn btn-primary btn-lg" onclick="go('m1')">Start Module 01 →</button>
+      <button class="btn btn-secondary btn-lg" onclick="go('pathways')">Find my pathway</button>
+    </div>
+    <div class="mini-rate">
+      <div class="mr-label">Try it — rate a risk</div>
+      <div class="mr-axis">Consequence →</div>
+      <div class="mr-grid" id="miniGrid"></div>
+      <div class="mr-out" id="miniOut">Pick a cell: likelihood × consequence.</div>
+    </div>
+  </div></div>
+
+  <div class="page-header" style="margin-top:8px">
+    <div class="eyebrow">The non-negotiables</div>
+    <h1 style="font-size:19px">Six things that apply to everyone, without exception</h1>
+    <p>These minimum requirements apply to all staff and all activities. <span class="source-tag">RMF · How to use this framework</span></p>
+  </div>
+  <div class="nn-grid">
+    <div class="nn"><div class="nn-n">1</div><div><h4>Every material decision is risk-informed</h4><p>Before any significant regulatory, operational or resource decision, a risk assessment is completed. The decision cannot proceed without it.</p></div></div>
+    <div class="nn"><div class="nn-n">2</div><div><h4>Every risk has a named owner</h4><p>Accountability sits with a person — not a team, and not the risk function.</p></div></div>
+    <div class="nn"><div class="nn-n">3</div><div><h4>Risk is assessed consistently</h4><p>All risks are rated on a residual basis using the same likelihood and consequence criteria.</p></div></div>
+    <div class="nn"><div class="nn-n">4</div><div><h4>High and Critical risks are escalated promptly</h4><p>High and Critical residual risks, and any appetite breach, are made visible to the Executive and Board.</p></div></div>
+    <div class="nn"><div class="nn-n">5</div><div><h4>Controls relied on are evidenced</h4><p>A control cannot be relied upon unless there is evidence it is well designed and operating in practice.</p></div></div>
+    <div class="nn"><div class="nn-n">6</div><div><h4>Risk records are kept current</h4><p>Assessments, controls, treatments and acceptances are documented and kept up to date.</p></div></div>
+  </div>
+
+  <div class="page-header" style="margin-top:28px">
+    <div class="eyebrow">How the hub works</div>
+    <h1 style="font-size:19px">Learn → practise → check</h1>
+  </div>
+  <div class="grid-3">
+    <div class="card"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">📚</div><h3 style="color:var(--navy);font-size:15px;margin-bottom:6px">Eight core modules</h3><p style="font-size:12px;color:var(--muted);margin:0">A sequence from fundamentals through rating, controls, appetite, treatment and the taxonomy. Each ends with a completion tick that fills your progress bar.</p></div></div>
+    <div class="card"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🎯</div><h3 style="color:var(--navy);font-size:15px;margin-bottom:6px">Real practice tools</h3><p style="font-size:12px;color:var(--muted);margin:0">The rating simulator uses NRAR's actual 5×5 grid and control-effectiveness matrix — the same logic that sits behind the Risk Register.</p></div></div>
+    <div class="card"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">✅</div><h3 style="color:var(--navy);font-size:15px;margin-bottom:6px">Knowledge check</h3><p style="font-size:12px;color:var(--muted);margin:0">Eight questions drawn straight from the framework, with an explanation for every answer so mistakes teach something.</p></div></div>
+  </div>
+</div>
+
+<!-- ============ PATHWAYS ============ -->
+<div class="page" id="page-pathways">
+  <div class="page-header">
+    <div class="eyebrow">Start here</div>
+    <h1>Choose your learning pathway</h1>
+    <p>Everyone at NRAR uses the framework, but the depth differs by role. Leaders set expectations and build capability; all staff identify, assess, control and report the risks in their work. Pick the path that matches your role. <span class="source-tag">RMF · How to use this framework · §7</span></p>
+  </div>
+  <div class="path-grid">
+    <div class="path-card" onclick="go('m1')">
+      <div class="p-ico">👥</div>
+      <h3>All staff (Line 1)</h3>
+      <p>You identify, assess and report the risks in your work and operate the controls relevant to your role. Start with the fundamentals and how to rate a risk.</p>
+      <div class="p-modules">Modules 01 · 02 · 03</div>
+    </div>
+    <div class="path-card" onclick="go('m4')">
+      <div class="p-ico">🛡️</div>
+      <h3>Risk &amp; control owners</h3>
+      <p>You are accountable for managing a specific risk or for a control being in place and operating. Focus on control effectiveness, appetite and treatment decisions.</p>
+      <div class="p-modules">Modules 03 · 04 · 05 · 06</div>
+    </div>
+    <div class="path-card" onclick="go('m7')">
+      <div class="p-ico">🏛️</div>
+      <h3>Managers &amp; leaders</h3>
+      <p>You set expectations, build capability, monitor performance and are accountable for the risks in your area. Cover the full set, with emphasis on taxonomy, registers, escalation and roles.</p>
+      <div class="p-modules">All modules · esp. 05 · 07 · 08</div>
+    </div>
+  </div>
+  <div class="note" style="margin-top:22px"><strong>Not sure?</strong> Work through 01–08 in order. Each module builds on the last, and the whole sequence takes about an hour.</div>
+</div>
+
+<!-- ============ MODULE 1 ============ -->
+<div class="page" id="page-m1">
+  <div class="mod-hero"><div class="m-num">01</div><div><h1>Risk fundamentals &amp; key terms</h1><p>The language the whole framework is built on</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Define risk as the effect of uncertainty on objectives — threats <em>and</em> opportunities</li>
+    <li>Tell inherent, residual and target residual risk apart, and say which one we actually manage</li>
+    <li>Explain what a control is and what "control effectiveness" means</li>
+    <li>Recognise the difference between appetite, tolerance and informed acceptance</li>
+  </ul></div>
+
+  <div class="card"><div class="card-header"><h3>What risk means here</h3><span class="src">RMF · Key terms</span></div><div class="card-body">
+    <p><strong>Risk is the effect of uncertainty on objectives — including both threats and opportunities.</strong> That second half matters: NRAR does not only manage things that might go wrong. Innovation and improvement are treated as an <em>opportunity lens</em> applied across every risk category, not a category of their own.</p>
+    <p>Because NRAR's work is inherently serious, risk management is not about eliminating risk. It is about taking <em>managed</em> risk where that is necessary to achieve lawful, fair, effective and efficient regulation — and being deliberate about it.</p>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>The three levels of a risk — flip each card</h3><span class="src">RMF · Key terms · §11.4</span></div><div class="card-body">
+    <p style="font-size:12px;color:var(--muted)">These three ratings are recorded for every material risk. Tap a card to reveal the meaning.</p>
+    <div class="term-grid" style="margin-top:12px">
+      <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in">
+        <div class="flip-face flip-front"><div class="t-term">Inherent risk</div><div class="t-hint">Tap to reveal</div></div>
+        <div class="flip-face flip-back"><p>The level of risk <b>before</b> controls are considered. Used as a baseline, so you can see how much the controls actually remove.</p></div>
+      </div></div>
+      <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in">
+        <div class="flip-face flip-front"><div class="t-term">Residual risk</div><div class="t-hint">Tap to reveal</div></div>
+        <div class="flip-face flip-back"><p>The level <b>after</b> existing, effective controls. This is what we actually manage, and what appetite is tested against.</p></div>
+      </div></div>
+      <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in">
+        <div class="flip-face flip-front"><div class="t-term">Target residual risk</div><div class="t-hint">Tap to reveal</div></div>
+        <div class="flip-face flip-back"><p>The <b>lowest residual achievable</b> with proportionate, reasonable controls. For safety risks, the level required by the WHS Act (so far as is reasonably practicable). We manage risks <em>toward</em> target.</p></div>
+      </div></div>
+      <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in">
+        <div class="flip-face flip-front"><div class="t-term">Control</div><div class="t-hint">Tap to reveal</div></div>
+        <div class="flip-face flip-back"><p>An action, process, system or behaviour that <b>prevents, detects or corrects</b> a risk. Control effectiveness is whether it is well designed <em>and</em> operating as intended in practice.</p></div>
+      </div></div>
+    </div>
+  </div></div>
+
+  <div class="note"><strong>The one idea to hold onto:</strong> we manage the <em>residual</em> risk, we compare it to <em>appetite</em>, and we push it toward its achievable <em>target</em>. Where residual already equals target, the risk is being managed as well as it reasonably can be — even if that target is Medium.</div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('pathways')">← Pathways</button><button class="btn btn-primary" onclick="complete('m1');go('m2')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 2 ============ -->
+<div class="page" id="page-m2">
+  <div class="mod-hero"><div class="m-num">02</div><div><h1>The PIRI process</h1><p>Plan · Implement · Review · Improve — NRAR's continuous risk cycle</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Name the four PIRI phases and what happens in each</li>
+    <li>Map PIRI onto the ISO 31000 process</li>
+    <li>Explain why communication and recording run <em>across</em> all four phases, not inside one</li>
+  </ul></div>
+
+  <div class="card"><div class="card-header"><h3>The cycle — click a phase</h3><span class="src">RMF · §12</span></div><div class="card-body">
+    <div class="piri-wrap">
+      <svg class="piri-svg" viewBox="0 0 200 200" id="piriSvg" aria-label="PIRI cycle">
+        <g id="segPlan" class="piri-seg" onclick="setPiri('plan')"><path d="M100,100 L100,10 A90,90 0 0,1 190,100 Z" fill="#2e808e"/><text x="140" y="60" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Plan</text></g>
+        <g id="segImplement" class="piri-seg" onclick="setPiri('implement')"><path d="M100,100 L190,100 A90,90 0 0,1 100,190 Z" fill="#0b3f47"/><text x="140" y="145" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Implement</text></g>
+        <g id="segReview" class="piri-seg" onclick="setPiri('review')"><path d="M100,100 L100,190 A90,90 0 0,1 10,100 Z" fill="#146cfd"/><text x="60" y="145" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Review</text></g>
+        <g id="segImprove" class="piri-seg" onclick="setPiri('improve')"><path d="M100,100 L10,100 A90,90 0 0,1 100,10 Z" fill="#8cdbe5"/><text x="60" y="60" fill="#0b3f47" font-size="12" font-weight="700" text-anchor="middle">Improve</text></g>
+        <circle cx="100" cy="100" r="34" fill="#002664"/><text x="100" y="97" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">PIRI</text><text x="100" y="112" fill="#8ce0ff" font-size="7" text-anchor="middle">continuous</text>
+      </svg>
+      <div class="piri-detail" id="piriDetail">
+        <div class="pd-phase" style="color:var(--teal02)">Phase</div>
+        <h3>Click a phase to explore it</h3>
+        <p>PIRI maps directly onto the ISO 31000 process. Communication and consultation, and recording and reporting, run across all four phases.</p>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>PIRI ↔ ISO 31000 ↔ the process standards</h3><span class="src">RMF · §12</span></div><div class="card-body">
+    <table class="tbl"><thead><tr><th>PIRI phase</th><th>Process standard</th><th>ISO 31000 step</th></tr></thead><tbody>
+      <tr><td class="fw">Plan</td><td>01 Plan — Understand risk &amp; opportunity</td><td>Scope, context &amp; criteria; risk identification, analysis &amp; evaluation</td></tr>
+      <tr><td class="fw">Implement</td><td>02 Implement — Manage risk &amp; opportunity</td><td>Risk treatment — control design and operation</td></tr>
+      <tr><td class="fw">Review</td><td>03 Review — Monitor, review &amp; report</td><td>Monitoring and review; assurance</td></tr>
+      <tr><td class="fw">Improve</td><td>04 Improve — Strengthen, adapt &amp; mature</td><td>Improvement and maturity</td></tr>
+    </tbody></table>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m1')">← Module 01</button><button class="btn btn-primary" onclick="complete('m2');go('m3')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 3 ============ -->
+<div class="page" id="page-m3">
+  <div class="mod-hero"><div class="m-num">03</div><div><h1>Rating a risk</h1><p>Likelihood × consequence, on the 5×5 grid</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Assess likelihood against the residual reality — how likely given the controls in place</li>
+    <li>Read the consequence table across seven domains and apply "highest consequence wins"</li>
+    <li>Use the 5×5 grid to convert a likelihood and consequence into one rating</li>
+  </ul></div>
+
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3>Likelihood</h3><span class="src">Appendix A.1</span></div><div class="card-body" style="padding-top:8px">
+      <p style="font-size:11.5px;color:var(--muted)">Assessed against the residual reality, using frequency as the anchor.</p>
+      <table class="tbl" style="margin-top:8px"><tbody>
+        <tr><td class="fw">5 · Almost certain</td><td>More than once a year</td></tr>
+        <tr><td class="fw">4 · Likely</td><td>About once a year</td></tr>
+        <tr><td class="fw">3 · Possible</td><td>Once every 1–5 years</td></tr>
+        <tr><td class="fw">2 · Unlikely</td><td>Once every 5–10 years</td></tr>
+        <tr><td class="fw">1 · Rare</td><td>Less than once in 10 years</td></tr>
+      </tbody></table>
+    </div></div>
+    <div class="card"><div class="card-header"><h3>Highest consequence wins</h3><span class="src">Appendix A.2 · §11</span></div><div class="card-body">
+      <p>Consequence is rated across <strong>seven domains</strong>: environmental / cultural, health &amp; safety, regulatory / legal &amp; defensibility, financial, reputation / public trust, data / information, and service delivery / operational.</p>
+      <p>You do <em>not</em> average them. A risk is rated against whichever domain produces the <strong>worst</strong> outcome — so two assessors reach the same result. A risk that is "minor" on six domains but "severe" on one is a severe risk.</p>
+      <div class="note" style="margin:8px 0 0"><strong>Financial bands are drafts</strong> — to be calibrated to NRAR's operating budget and materiality.</div>
+    </div></div>
+  </div>
+
+  <div class="card"><div class="card-header"><h3>The 5×5 rating grid — hover to explore, click to test yourself</h3><span class="src">Appendix B · §11.3</span></div><div class="card-body">
+    <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">The grid is applied twice — once for inherent (before controls) and once for residual (after controls). Bands come from this cell lookup, <strong>not</strong> from multiplying L×C.</p>
+    <div class="matrix-tool">
+      <div class="mx-yaxis">Likelihood ↑</div>
+      <div class="mx-grid" id="ratingGrid"></div>
+    </div>
+    <div style="text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px">Consequence →</div>
+    <div class="mx-readout" id="ratingReadout"><div class="ro-pick">Hover any cell to see its rating.</div></div>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m2')">← Module 02</button><button class="btn btn-primary" onclick="complete('m3');go('m4')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 4 ============ -->
+<div class="page" id="page-m4">
+  <div class="mod-hero"><div class="m-num">04</div><div><h1>Controls &amp; control effectiveness</h1><p>Design × implementation → one of six effectiveness ratings</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Assess a control on two dimensions — design and implementation</li>
+    <li>Combine them into one of six overall effectiveness ratings</li>
+    <li>Explain why only Effective or Substantially Effective controls justify a residual reduction</li>
+    <li>Use the "Not implemented" flag correctly</li>
+  </ul></div>
+
+  <div class="grid-2">
+    <div class="card"><div class="card-body"><h3 style="color:var(--navy);font-size:14px;margin-bottom:6px">① Design</h3><p style="font-size:12.5px;color:var(--muted);margin:0">If the control operated as intended, would it adequately prevent, detect or correct the risk?</p></div></div>
+    <div class="card"><div class="card-body"><h3 style="color:var(--navy);font-size:14px;margin-bottom:6px">② Implementation</h3><p style="font-size:12.5px;color:var(--muted);margin:0">Is the control actually in place and operating consistently, with evidence to support reliance on it?</p></div></div>
+  </div>
+
+  <div class="card"><div class="card-header"><h3>Combine them — hover the matrix</h3><span class="src">Appendix D.2</span></div><div class="card-body">
+    <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Read across from design (rows) and down from implementation (columns). The two ratings combine to give one of six overall effectiveness ratings.</p>
+    <div class="matrix-tool">
+      <div class="mx-yaxis">Design ↑</div>
+      <div class="mx-grid" id="ctrlGrid"></div>
+    </div>
+    <div style="text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px">Implementation →</div>
+    <div class="mx-readout" id="ctrlReadout"><div class="ro-pick">Hover any cell to see the combined rating.</div></div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>What each rating lets you rely on</h3><span class="src">Appendix D.1</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Rating</th><th>Reliance</th><th>Meaning</th></tr></thead><tbody>
+      <tr><td><span class="chip low">Effective</span></td><td class="fw">Full</td><td>Very strong design AND very strong/strong implementation. Consistently operating as intended.</td></tr>
+      <tr><td><span class="chip low">Substantially effective</span></td><td class="fw">High</td><td>Strong design with strong or adequate implementation. Mature and unlikely to fail significantly.</td></tr>
+      <tr><td><span class="chip medium">Partially effective</span></td><td class="fw">Partial</td><td>Adequate design but limited or inconsistent implementation. Failures have occurred or are expected.</td></tr>
+      <tr><td><span class="chip high">Limited</span></td><td class="fw">Low</td><td>Reduces some aspects of risk but likely to fail. Heavy reliance on manual workarounds.</td></tr>
+      <tr><td><span class="chip high">Weak</span></td><td class="fw">Minimal</td><td>Poor design even when used correctly. Little or no protection.</td></tr>
+      <tr><td><span class="chip critical">Ineffective</span></td><td class="fw">None</td><td>Consistently not operating as intended. Failure rates significant and unacceptable.</td></tr>
+    </tbody></table>
+  </div></div>
+
+  <div class="note"><strong>The reliance rule.</strong> Only controls rated <em>Effective</em> or <em>Substantially effective</em> justify a reduction from inherent to residual. Anything lower is a <em>control gap</em> that needs treatment — or, where the residual is above target and can't be reduced at proportionate cost, documented informed acceptance. A control that doesn't exist yet is flagged <strong>"Not implemented"</strong> and gets no credit — it's a status, not an effectiveness rating.</div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m3')">← Module 03</button><button class="btn btn-primary" onclick="complete('m4');go('m5')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 5 ============ -->
+<div class="page" id="page-m5">
+  <div class="mod-hero"><div class="m-num">05</div><div><h1>Risk appetite &amp; tolerance</h1><p>A posture, not a ceiling</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Explain why appetite is a <em>posture</em>, not a maximum residual rating</li>
+    <li>Separate three ideas that are easy to confuse: appetite, tolerance and target</li>
+    <li>Apply the operating rule for "within appetite" vs "needs treatment"</li>
+    <li>Look up the required response for each residual rating</li>
+  </ul></div>
+
+  <div class="card"><div class="card-header"><h3>Why "above appetite" doesn't mean "controls failed"</h3><span class="src">RMF · §8.3</span></div><div class="card-body">
+    <p>Because NRAR's work is inherently serious, the best residual most risks can reach — even with strong, fully effective controls — is <strong>Medium</strong>. A low appetite does not mean every residual must be Low. To avoid confusing "residual above appetite" with "controls have failed", the framework keeps three ideas separate:</p>
+    <div class="grid-3" style="margin-top:6px">
+      <div style="background:var(--accent-pale);border-radius:8px;padding:14px"><h4 style="color:var(--accent-dk);font-size:13px;margin-bottom:5px">Appetite</h4><p style="font-size:11.5px;color:var(--muted);margin:0;line-height:1.5">The <b>posture</b> — how much risk we'll take, and the outcomes we won't tolerate. Drives control strength, oversight intensity, escalation readiness. <em>Not</em> a residual ceiling.</p></div>
+      <div style="background:var(--accent-pale);border-radius:8px;padding:14px"><h4 style="color:var(--accent-dk);font-size:13px;margin-bottom:5px">Tolerance</h4><p style="font-size:11.5px;color:var(--muted);margin:0;line-height:1.5">The <b>response bands</b> — the residual ratings that mandate a response. Drives the accept / treat / escalate decision.</p></div>
+      <div style="background:var(--accent-pale);border-radius:8px;padding:14px"><h4 style="color:var(--accent-dk);font-size:13px;margin-bottom:5px">Target residual</h4><p style="font-size:11.5px;color:var(--muted);margin:0;line-height:1.5">What <b>good looks like</b> — the lowest residual achievable with proportionate controls. Residual is measured against this, not a fixed number.</p></div>
+    </div>
+  </div></div>
+
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><h3>Within appetite when…</h3><span class="src">§8.3 operating rule</span></div><div class="card-body">
+      <p style="margin-bottom:6px">All three hold:</p>
+      <p style="font-size:12.5px;line-height:1.7;margin:0">✔ residual is within tolerance (Medium or below)<br>✔ controls are effective and operating<br>✔ residual is at or near its achievable target</p>
+      <div class="note" style="margin-top:12px">A <strong>Medium</strong> residual with effective controls already at their practical floor is <em>within appetite</em> and needs monitoring, not treatment — even where category appetite is Low.</div>
+    </div></div>
+    <div class="card"><div class="card-header"><h3>Treat or escalate when…</h3><span class="src">§8.3</span></div><div class="card-body">
+      <p style="font-size:12.5px;line-height:1.7;margin:0">Any one is true:<br>• residual is <span class="chip high">High</span> or <span class="chip critical">Critical</span> (tolerance breach)<br>• controls are ineffective or not operating (control gap)<br>• residual is above its achievable target (a proportionate improvement exists)<br>• a specific intolerable outcome in a very-low-appetite area is exposed</p>
+    </div></div>
+  </div>
+
+  <div class="card"><div class="card-header"><h3>Residual rating → required response</h3><span class="src">§8.5 · Appendix C</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Residual</th><th>Tolerance position</th><th>Required response</th></tr></thead><tbody>
+      <tr><td><span class="chip critical">Critical</span></td><td class="fw">Not acceptable</td><td>Immediate escalation. Activity stops, changes or is contained unless continuation is Executive-approved in exceptional circumstances. Documented treatment plan. Board visibility.</td></tr>
+      <tr><td><span class="chip high">High</span></td><td class="fw">Not acceptable without treatment</td><td>Escalation required. Documented treatment plan and active senior oversight until reduced or formally accepted within delegation.</td></tr>
+      <tr><td><span class="chip medium">Medium</span></td><td class="fw">Acceptable within managed operations</td><td>Defined controls and monitoring. Treat where controls are weak, the trend is deteriorating, or residual is above target. Periodic review.</td></tr>
+      <tr><td><span class="chip low">Low</span></td><td class="fw">Acceptable within routine operations</td><td>Managed through standard processes. Routine monitoring. Escalate only if the profile changes or controls fail.</td></tr>
+    </tbody></table>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Appetite by category — the twelve at a glance</h3><span class="src">§8.4</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Risk category</th><th>Risk appetite</th><th>Opportunity appetite</th></tr></thead><tbody id="appetiteRows"></tbody></table>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m4')">← Module 04</button><button class="btn btn-primary" onclick="complete('m5');go('m6')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 6 ============ -->
+<div class="page" id="page-m6">
+  <div class="mod-hero"><div class="m-num">06</div><div><h1>Treatment &amp; informed acceptance</h1><p>Choosing a response — and accepting risk properly</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Pick from the six treatment options</li>
+    <li>Recognise when treatment is required</li>
+    <li>Run an informed acceptance correctly — and know who can accept at each level</li>
+  </ul></div>
+
+  <div class="card"><div class="card-header"><h3>The six treatment options</h3><span class="src">Appendix E.1</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Option</th><th>When to use it</th></tr></thead><tbody>
+      <tr><td class="fw">Avoid</td><td>Decide not to start, or to stop, the activity that gives rise to the risk.</td></tr>
+      <tr><td class="fw">Reduce likelihood</td><td>Strengthen preventive controls so the event is less likely.</td></tr>
+      <tr><td class="fw">Reduce consequence</td><td>Strengthen detective or corrective controls so the impact is smaller.</td></tr>
+      <tr><td class="fw">Share or transfer</td><td>Use insurance, contracts or partnerships to share the risk — noting accountability cannot be transferred.</td></tr>
+      <tr><td class="fw">Retain (informed acceptance)</td><td>Consciously accept the residual where it cannot be reduced further at proportionate cost.</td></tr>
+      <tr><td class="fw">Take or increase</td><td>Accept more risk to pursue a worthwhile opportunity, consistent with opportunity appetite.</td></tr>
+    </tbody></table>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Informed acceptance is a governed outcome — not a control failure</h3><span class="src">Appendix E.3</span></div><div class="card-body">
+    <p>Where a residual sits above the appetite posture and can't be reduced further without disproportionate cost, it may be consciously accepted. To be valid, an acceptance must:</p>
+    <p style="font-size:12.5px;line-height:1.8;margin:0">• be made by a person with the appropriate delegation<br>• record the basis, including why further treatment is not proportionate<br>• be visible to the Executive, and to the Board for material risks<br>• be time-bound, with a review date</p>
+    <div class="note" style="margin-top:12px">A Medium residual with effective controls already at their practical floor is within appetite and is accepted <em>as a matter of course</em>.</div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Who can accept — acceptance delegations</h3><span class="src">Appendix E.4 (draft)</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Residual level</th><th>Who may accept (draft)</th><th>Review</th></tr></thead><tbody>
+      <tr><td><span class="chip low">Low</span></td><td class="fw">Manager / risk owner</td><td>Annual or on change</td></tr>
+      <tr><td><span class="chip medium">Medium</span></td><td class="fw">Director / senior manager</td><td>At least annual</td></tr>
+      <tr><td><span class="chip high">High</span></td><td class="fw">Relevant Executive Director / Executive</td><td>At least quarterly</td></tr>
+      <tr><td><span class="chip critical">Critical</span></td><td class="fw">Chief Regulatory Officer, with Board visibility</td><td>Continuous until reduced</td></tr>
+    </tbody></table>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;font-style:italic">Draft levels — to be aligned with NRAR's formal delegations.</p>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m5')">← Module 05</button><button class="btn btn-primary" onclick="complete('m6');go('m7')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 7 ============ -->
+<div class="page" id="page-m7">
+  <div class="mod-hero"><div class="m-num">07</div><div><h1>Taxonomy, registers &amp; roles</h1><p>One set of categories, one measurement spine, clear accountability</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Explain why NRAR uses a single taxonomy everywhere</li>
+    <li>Place a risk in the right register tier and describe how risks escalate between tiers</li>
+    <li>Distinguish the three lines of defence and who sits in each</li>
+  </ul></div>
+
+  <div class="card"><div class="card-header"><h3>One taxonomy, used everywhere</h3><span class="src">RMF · §9</span></div><div class="card-body">
+    <p>NRAR uses <strong>one set of twelve categories</strong> to classify every risk, set appetite, and group controls. Using a single taxonomy is what lets risks be compared and aggregated across the organisation — from an activity-level assessment up to the Board. Innovation and change are an <em>opportunity lens</em> across all twelve, not a thirteenth category.</p>
+    <p style="font-size:12px;color:var(--muted);margin:0">Explore all twelve categories and their named risks in the <a onclick="go('categories')" style="cursor:pointer">Category explorer →</a></p>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>The register hierarchy</h3><span class="src">RMF · §10</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Tier</th><th>Register</th><th>Scope</th><th>Owner</th></tr></thead><tbody>
+      <tr><td class="fw">1</td><td class="fw">Enterprise Risk Register</td><td>Strategic &amp; material risks across all twelve categories. Board-visible.</td><td>CRO / Executive</td></tr>
+      <tr><td class="fw">2</td><td>Regulatory Risk Register</td><td>Categories 1–5</td><td>Regulatory Exec Director</td></tr>
+      <tr><td class="fw">2</td><td>WHS Register</td><td>Category 9 — field safety &amp; psychosocial</td><td>People / WHS</td></tr>
+      <tr><td class="fw">2</td><td>ICT &amp; Data Governance Register</td><td>Category 8 — data, ICT, cyber</td><td>CIO / Data</td></tr>
+      <tr><td class="fw">2</td><td>Records &amp; Information Mgmt Register</td><td>Recordkeeping, State Records, privacy</td><td>Information Governance</td></tr>
+      <tr><td class="fw">3</td><td>Branch / divisional</td><td>Optional — where not already captured by a Tier-2 register</td><td>Branch managers</td></tr>
+      <tr><td class="fw">—</td><td>Project registers</td><td>One per project; material risks feed upward</td><td>Project owners</td></tr>
+      <tr><td class="fw">—</td><td>Activity-level assessments</td><td>The operational floor — e.g. field inspection, driving, site visits</td><td>Activity leads</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>Escalation between tiers.</strong> A risk assessed <span class="chip high">High</span> or <span class="chip critical">Critical</span> at residual, or any appetite breach, escalates to the next tier, onto the Enterprise Register, and into Board reporting. Categories 6, 7, 10, 11 and 12 are held in the Enterprise Register and in branch/project registers until a dedicated Tier-2 register is created.</div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Three lines of defence</h3><span class="src">RMF · §7.2</span></div><div class="card-body" style="padding-top:8px">
+    <table class="tbl"><thead><tr><th>Line</th><th>Who</th><th>Role</th></tr></thead><tbody>
+      <tr><td class="fw">Line 1 — own &amp; manage</td><td>Managers, control owners, all staff</td><td>Design, operate and monitor controls. Own the risk. Accountable for control effectiveness.</td></tr>
+      <tr><td class="fw">Line 2 — oversee &amp; challenge</td><td>Risk &amp; Assurance function</td><td>Set standards, provide guidance, monitor consistency, challenge Line 1. Do <em>not</em> own or operate controls.</td></tr>
+      <tr><td class="fw">Line 3 — independent assurance</td><td>Internal audit &amp; external assurance</td><td>Provide independent assurance directly to the NRAR Board on whether risks and controls are managed effectively.</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>Oversight.</strong> NRAR does not run a separate Audit &amp; Risk Committee — the independent NRAR Board provides risk oversight and independent assurance, performing the role an ARC would otherwise hold.</div>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m6')">← Module 06</button><button class="btn btn-primary" onclick="complete('m7');go('m8')">Mark complete &amp; continue →</button></div>
+</div>
+
+<!-- ============ MODULE 8 ============ -->
+<div class="page" id="page-m8">
+  <div class="mod-hero"><div class="m-num">08</div><div><h1>Special cases: AI &amp; cultural values</h1><p>When the control is an existing external instrument — not an NRAR process</p></div></div>
+  <div class="learn-obj"><div class="lo-t">By the end of this module you can</div><ul>
+    <li>Recognise the small number of risks where NRAR uses an existing external instrument rather than authoring its own process</li>
+    <li>Name the instrument for cultural-values engagement and for AI use</li>
+    <li>Say what "Effective" control looks like in each case</li>
+  </ul></div>
+
+  <div class="note"><strong>The principle.</strong> For a few risks, the appropriate control is not an NRAR-authored process but adherence to an existing, externally-developed instrument. Where this applies, NRAR does <em>not</em> create a parallel or competing standard — it names the instrument to use and defines what "Effective" means in that context. <span class="source-tag">Appendix G — intro</span></div>
+
+  <div class="card"><div class="card-header"><h3>Cultural values &amp; First Nations water rights</h3><span class="src">Category 4 · Appendix G.4</span></div><div class="card-body">
+    <p>Cultural values are <strong>not</strong> a subset of environmental values — they are a distinct dimension of harm, with their own significance, knowledge holders and legal context (including the <em>Water Management Act 2000</em> and native title). For a NSW regulator this is strategically material, not peripheral.</p>
+    <p><strong>Instrument to use:</strong> NRAR engages through existing instruments — principally the engagement protocol developed by the <strong>Murray Lower Darling Rivers Indigenous Nations (MLDRIN)</strong>, and the relevant <strong>DCCEEW Aboriginal Regional Water Strategies</strong> for the catchments NRAR operates in. Risk owners should obtain the current document before engaging, rather than designing a parallel NRAR process.</p>
+    <table class="tbl" style="margin-top:8px"><thead><tr><th>Effectiveness</th><th>What it looks like here</th></tr></thead><tbody>
+      <tr><td><span class="chip low">Effective</span></td><td>Engagement followed the applicable MLDRIN protocol or Regional Water Strategy, and adherence is evidenced (who was consulted, when, and how cultural input shaped the decision).</td></tr>
+      <tr><td><span class="chip medium">Partially effective</span></td><td>Some steps followed but not evidenced, or engagement occurred but did not follow the agreed protocol.</td></tr>
+      <tr><td><span class="chip critical">Ineffective</span></td><td>No recognised protocol was followed.</td></tr>
+    </tbody></table>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Artificial intelligence &amp; automated decision support</h3><span class="src">Category 8 · Appendix G.8</span></div><div class="card-body">
+    <p>A decision informed by an unexplainable or unvalidated automated output is a decision NRAR may not be able to defend on judicial review — and a biased or poorly governed tool can quietly embed unfairness into enforcement patterns long before it's detected. The framework names this as a distinct risk <em>now</em>, rather than waiting for an AI-related incident to force the issue.</p>
+    <p><strong>Instrument to use:</strong> the <strong>NSW AI Assessment Framework (AIAF)</strong> — the NSW Government's mandatory, risk-based self-assessment for the design, development, deployment, procurement and use of AI, issued under DCS-2024-04 and aligned to the mandatory NSW AI Ethics Principles. It applies across the full AI lifecycle and produces its own residual rating. Where the AIAF rates residual risk high or critical, the assessment goes to the <strong>NSW AI Review Committee</strong>. Projects over $5M or funded by the Digital Restart Fund get additional oversight under the NSW Digital Assurance Framework.</p>
+    <table class="tbl" style="margin-top:8px"><thead><tr><th>Effectiveness</th><th>What it looks like here</th></tr></thead><tbody>
+      <tr><td><span class="chip low">Effective</span></td><td>An AIAF has been completed for the system, is current, its residual rating recorded, and — where high or critical — escalated to and reviewed by the AI Review Committee.</td></tr>
+      <tr><td><span class="chip medium">Partially effective</span></td><td>An AIAF exists but is stale, incomplete, or was not escalated when the rating required it.</td></tr>
+      <tr><td><span class="chip critical">Ineffective</span></td><td>No AIAF completed for an AI system in active development, procurement or use.</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>Note.</strong> NRAR's own rating for this entry tracks whether the AIAF process is being followed and kept current — it does <em>not</em> re-score the AI system's technical risk, which is the AIAF's own output.</div>
+  </div></div>
+
+  <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m7')">← Module 07</button><button class="btn btn-primary" onclick="complete('m8');go('quiz')">Finish &amp; test yourself →</button></div>
+</div>
+
+<!-- ============ SIMULATOR ============ -->
+<div class="page" id="page-simulator">
+  <div class="page-header"><div class="eyebrow">Practise</div><h1>Rating simulator</h1><p>Both tools use NRAR's actual lookups — the same 5×5 grid and control-effectiveness matrix that sit behind the Risk Register. Nothing here is approximated.</p></div>
+
+  <div class="card"><div class="card-header"><h3>Rate a risk — pick likelihood, then consequence</h3><span class="src">Appendix B</span></div><div class="card-body">
+    <div class="matrix-tool">
+      <div class="mx-yaxis">Likelihood ↑</div>
+      <div class="mx-grid" id="simGrid"></div>
+    </div>
+    <div style="text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px">Consequence →</div>
+    <div class="mx-readout" id="simReadout"><div class="ro-pick">Click a cell to lock in a rating.</div></div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h3>Rate a control — pick design, then implementation</h3><span class="src">Appendix D.2</span></div><div class="card-body">
+    <div class="matrix-tool">
+      <div class="mx-yaxis">Design ↑</div>
+      <div class="mx-grid" id="simCtrlGrid"></div>
+    </div>
+    <div style="text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px">Implementation →</div>
+    <div class="mx-readout" id="simCtrlReadout"><div class="ro-pick">Click a cell to lock in an effectiveness rating.</div></div>
+  </div></div>
+</div>
+
+<!-- ============ SCENARIO ============ -->
+<div class="page" id="page-scenario">
+  <div class="page-header"><div class="eyebrow">Practise</div><h1>Worked scenario</h1><p>A realistic NRAR situation, walked through the framework end to end. Reveal each step when you've thought about your own answer.</p></div>
+
+  <div class="card"><div class="card-header"><h3>The situation</h3><span class="src">Illustrative — modelled on Category 3 &amp; 8 risks</span></div><div class="card-body">
+    <p>NRAR is preparing to prosecute a licence holder for water take during a cease-to-flow period. The evidence rests substantially on telemetry and water-accounting data generated and controlled by WaterNSW. There is <strong>no formal data-sharing agreement</strong>, no outage-notification protocol, and no evidentiary certification standard for that data. A capable irrigator legal community is actively watching NRAR's governance.</p>
+    <p style="font-size:12px;color:var(--muted);margin:0">Work each step before revealing the model answer.</p>
+  </div></div>
+
+  <div id="scenarioSteps"></div>
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div class="page" id="page-quiz">
+  <div class="page-header"><div class="eyebrow">Practise</div><h1>Knowledge check</h1><p>Eight questions drawn straight from the framework. Pick an answer to see whether it's right and why. Your score updates as you go.</p></div>
+  <div class="quiz-score" id="quizScore"><div class="qs-n"><span id="quizNum">0</span>/8</div><p id="quizMsg">Answer the questions below.</p></div>
+  <div id="quizList"></div>
+</div>
+
+<!-- ============ CATEGORIES ============ -->
+<div class="page" id="page-categories">
+  <div class="page-header"><div class="eyebrow">Reference</div><h1>Category explorer</h1><p>The twelve master risk categories, their appetite, and the named risks that commonly sit within each. Reference material to support an assessment — illustrative, not an exhaustive checklist. <span class="source-tag">RMF §9 · Appendix G</span></p></div>
+  <div class="cat-list" id="catList"></div>
+</div>
+
+<!-- ============ GLOSSARY ============ -->
+<div class="page" id="page-glossary">
+  <div class="page-header"><div class="eyebrow">Reference</div><h1>Glossary</h1><p>Terms used consistently across the framework, appendices and the Risk Management Platform. <span class="source-tag">Appendix F</span></p></div>
+  <input class="gloss-search" id="glossSearch" placeholder="Search terms — e.g. residual, appetite, SFAIRP…" oninput="renderGloss(this.value)">
+  <div id="glossList"></div>
+</div>
+
+<!-- ============ LINKS ============ -->
+<div class="page" id="page-links">
+  <div class="page-header"><div class="eyebrow">Reference</div><h1>Source documents</h1><p>This hub is a learning layer over the controlled documents. For the authoritative text, and for the live risk data, go to the source.</p></div>
+  <div class="grid-2">
+    <div class="link-card"><div class="lc-ico">📘</div><div><h4>NRAR Risk Management Framework</h4><p>The authority — purpose, non-negotiables, appetite, PIRI, taxonomy, governance. Draft 15 Jun 2026.</p></div></div>
+    <div class="link-card"><div class="lc-ico">📑</div><div><h4>RMF Appendices (v0.5)</h4><p>The measurement spine — criteria, descriptors, control effectiveness, treatment, glossary, category detail.</p></div></div>
+    <div class="link-card"><div class="lc-ico">📊</div><div><h4>NRAR Risk Register</h4><p>The live operational tool. Its "RMF Reference Guide" page holds the canonical lookup tables this hub teaches from.</p></div></div>
+    <div class="link-card"><div class="lc-ico">🏛️</div><div><h4>NSW AI Assessment Framework</h4><p>The mandatory instrument for the AI risk (Category 8) — available from Digital NSW.</p></div></div>
+  </div>
+  <div class="note" style="margin-top:20px"><strong>Keeping this hub aligned.</strong> The lookup tables, appetite positions, delegations and category detail here are derived directly from the RMF and Appendices. When those documents are updated, the matching values in this hub should be reviewed against them — the framework is the source of truth, not the hub.</div>
+</div>
+
+</div>
+
+<script>
+/* ============ NAV ============ */
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===id));
+  document.getElementById('main').scrollTop=0; window.scrollTo(0,0);
+}
+
+/* ============ PROGRESS ============ */
+let done = {};
+function complete(m){ done[m]=true; refreshProgress(); }
+function refreshProgress(){
+  const mods=['m1','m2','m3','m4','m5','m6','m7','m8'];
+  let c=0;
+  mods.forEach(m=>{ const nav=document.querySelector('.nav-item[data-page="'+m+'"]'); if(done[m]){c++;nav&&nav.classList.add('completed');} else {nav&&nav.classList.remove('completed');} });
+  document.getElementById('prog-text').textContent=c+' of 8 modules';
+  document.getElementById('prog-fill').style.width=(c/8*100)+'%';
+}
+function resetProgress(){ done={}; refreshProgress(); }
+
+/* ============ RATING GRID DATA (Appendix B / §11.3) ============ */
+/* rows = likelihood 5..1 (top->bottom), cols = consequence 1..5 (left->right) */
+const LIKE=['Almost certain','Likely','Possible','Unlikely','Rare'];
+const CONS=['Insignificant','Minor','Moderate','Major','Severe'];
+const GRID=[ /* index0 = Almost certain */
+ ['medium','medium','high','critical','critical'],
+ ['low','medium','high','critical','critical'],
+ ['low','medium','medium','high','critical'],
+ ['low','low','medium','high','high'],
+ ['low','low','low','medium','high']
+];
+const BANDSAY={
+ critical:'Not acceptable. Immediate escalation; activity stops, changes or is contained unless Executive-approved. Documented treatment plan; Board visibility.',
+ high:'Not acceptable without treatment. Escalate; documented treatment plan and active senior oversight until reduced or formally accepted within delegation.',
+ medium:'Acceptable within managed operations. Maintain controls and monitoring; treat where controls are weak, deteriorating, or above target.',
+ low:'Acceptable within routine operations. Standard controls and routine monitoring; escalate only if the profile changes or controls fail.'
+};
+const BANDNAME={critical:'CRITICAL',high:'HIGH',medium:'MEDIUM',low:'LOW'};
+
+function buildRatingGrid(hostId, readoutId, opts){
+  opts=opts||{};
+  const host=document.getElementById(hostId); if(!host) return;
+  host.innerHTML='';
+  // corner
+  const corner=document.createElement('div'); corner.className='mx-corner'; corner.textContent=''; host.appendChild(corner);
+  // column headers (consequence 1..5)
+  CONS.forEach((c,i)=>{ const h=document.createElement('div'); h.className='mx-colh'; h.innerHTML=(i+1)+'<br>'+c; host.appendChild(h); });
+  // rows
+  GRID.forEach((row,ri)=>{
+    const rh=document.createElement('div'); rh.className='mx-rowh'; rh.innerHTML=(5-ri)+' · '+LIKE[ri]; host.appendChild(rh);
+    row.forEach((band,ci)=>{
+      const cell=document.createElement('div');
+      cell.className='mx-cell cell-'+band; cell.textContent=BANDNAME[band];
+      cell.dataset.band=band; cell.dataset.l=LIKE[ri]; cell.dataset.c=CONS[ci];
+      const ro=document.getElementById(readoutId);
+      cell.addEventListener('mouseenter',()=>{ if(!opts.lockMode||!host.dataset.locked) showRating(ro,cell); });
+      if(opts.lockMode){
+        cell.addEventListener('click',()=>{
+          host.querySelectorAll('.mx-cell').forEach(x=>x.classList.remove('sel'));
+          cell.classList.add('sel'); host.dataset.locked='1'; showRating(ro,cell,true);
+        });
+      }
+      host.appendChild(cell);
+    });
+  });
+}
+function showRating(ro,cell,locked){
+  if(!ro) return;
+  ro.innerHTML='<div class="ro-pick">'+cell.dataset.l+' × '+cell.dataset.c+(locked?' — locked in':'')+
+    '</div><div class="ro-band" style="color:var(--'+cell.dataset.band+')">'+BANDNAME[cell.dataset.band]+
+    '</div><div class="ro-say">'+BANDSAY[cell.dataset.band]+'</div>';
+}
+
+/* ============ CONTROL EFFECTIVENESS (Appendix D.2) ============ */
+const DES=['Very Strong','Strong','Adequate','Limited','Weak']; /* rows top->bottom */
+const IMP=['Very Strong','Strong','Adequate','Limited','Weak']; /* cols left->right */
+const CTRL=[
+ ['effective','effective','subeff','parteff','parteff'],
+ ['effective','subeff','subeff','parteff','ineffective'],
+ ['subeff','subeff','parteff','parteff','ineffective'],
+ ['parteff','parteff','parteff','ineffective','ineffective'],
+ ['parteff','parteff','ineffective','ineffective','ineffective']
+];
+const CNAME={effective:'Effective',subeff:'Substantially effective',parteff:'Partially effective',ineffective:'Ineffective'};
+const CSAY={
+ effective:'Full reliance. Justifies a reduction from inherent to residual.',
+ subeff:'High reliance. Justifies a residual reduction; mature and unlikely to fail significantly.',
+ parteff:'Partial reliance only — a control gap. Failures have occurred or are expected; treatment usually required.',
+ ineffective:'No reliance. Consistently not operating as intended — a control gap requiring treatment.'
+};
+const CCOLOR={effective:'#2e808e',subeff:'#0b3f47',parteff:'#7a5500',ineffective:'#d7153a'};
+
+function buildCtrlGrid(hostId, readoutId, opts){
+  opts=opts||{};
+  const host=document.getElementById(hostId); if(!host) return;
+  host.innerHTML='';
+  const corner=document.createElement('div'); corner.className='mx-corner'; host.appendChild(corner);
+  IMP.forEach(c=>{ const h=document.createElement('div'); h.className='mx-colh'; h.textContent=c; host.appendChild(h); });
+  CTRL.forEach((row,ri)=>{
+    const rh=document.createElement('div'); rh.className='mx-rowh'; rh.textContent=DES[ri]; host.appendChild(rh);
+    row.forEach((band,ci)=>{
+      const cell=document.createElement('div');
+      cell.className='mx-cell cell-'+band; cell.textContent=CNAME[band].split(' ')[0];
+      cell.dataset.band=band; cell.dataset.d=DES[ri]; cell.dataset.i=IMP[ci];
+      const ro=document.getElementById(readoutId);
+      cell.addEventListener('mouseenter',()=>{ if(!opts.lockMode||!host.dataset.locked) showCtrl(ro,cell); });
+      if(opts.lockMode){
+        cell.addEventListener('click',()=>{
+          host.querySelectorAll('.mx-cell').forEach(x=>x.classList.remove('sel'));
+          cell.classList.add('sel'); host.dataset.locked='1'; showCtrl(ro,cell,true);
+        });
+      }
+      host.appendChild(cell);
+    });
+  });
+}
+function showCtrl(ro,cell,locked){
+  if(!ro) return;
+  ro.innerHTML='<div class="ro-pick">Design: '+cell.dataset.d+' × Implementation: '+cell.dataset.i+(locked?' — locked in':'')+
+    '</div><div class="ro-band" style="color:'+CCOLOR[cell.dataset.band]+'">'+CNAME[cell.dataset.band]+
+    '</div><div class="ro-say">'+CSAY[cell.dataset.band]+'</div>';
+}
+
+/* ============ MINI GRID (hero) ============ */
+function buildMini(){
+  const host=document.getElementById('miniGrid'); if(!host) return;
+  const out=document.getElementById('miniOut');
+  GRID.forEach((row,ri)=>row.forEach((band,ci)=>{
+    const cell=document.createElement('div');
+    cell.className='mr-cell c-'+band;
+    cell.addEventListener('mouseenter',()=>{
+      host.querySelectorAll('.mr-cell').forEach(x=>x.classList.remove('on')); cell.classList.add('on');
+      out.innerHTML=LIKE[ri]+' × '+CONS[ci]+'<b style="color:var(--teal03)">'+BANDNAME[band]+'</b>';
+    });
+    host.appendChild(cell);
+  }));
+}
+
+/* ============ PIRI ============ */
+const PIRI={
+ plan:{c:'#2e808e',t:'Plan',sub:'Standard 01 — Understand risk &amp; opportunity',p:'Set the scope, context and criteria, then identify, analyse and evaluate the risks and opportunities. This is where you decide what you are assessing and against which criteria.',iso:'ISO 31000: scope, context &amp; criteria; risk identification, analysis and evaluation.'},
+ implement:{c:'#0b3f47',t:'Implement',sub:'Standard 02 — Manage risk &amp; opportunity',p:'Treat the risk — design and operate the controls, and decide whether to avoid, reduce, share, retain or take the risk. This is where the response actually happens.',iso:'ISO 31000: risk treatment — control design and operation.'},
+ review:{c:'#146cfd',t:'Review',sub:'Standard 03 — Monitor, review &amp; report',p:'Monitor and review whether controls are working and risks are within appetite, and report upward. Assurance confirms that decisions and processes meet the standard.',iso:'ISO 31000: monitoring and review; assurance.'},
+ improve:{c:'#0b3f47',t:'Improve',sub:'Standard 04 — Strengthen, adapt &amp; mature',p:'Capture lessons, address root causes and embed change so maturity grows over time. What you learn here flows back into the next Plan.',iso:'ISO 31000: improvement and maturity.'}
+};
+function setPiri(k){
+  const d=PIRI[k]; const el=document.getElementById('piriDetail');
+  el.innerHTML='<div class="pd-phase" style="color:'+d.c+'">'+d.sub+'</div><h3>'+d.t+'</h3><p>'+d.p+'</p><div class="pd-iso">'+d.iso+'</div>';
+}
+
+/* ============ APPETITE BY CATEGORY (§8.4) ============ */
+const APPETITE=[
+ ['1. Regulatory effectiveness &amp; outcomes','Low','High'],
+ ['2. Regulated entity behaviour &amp; compliance','Low–moderate','Moderate–high'],
+ ['3. Enforcement &amp; statutory decision-making','Very low','Moderate'],
+ ['4. Environmental, catchment &amp; cultural outcomes','Very low','Moderate–high'],
+ ['5. Public trust, fairness &amp; reputation','Very low','Moderate'],
+ ['6. Independence &amp; integrity','Very low','Low–moderate'],
+ ['7. Legal, regulatory &amp; government compliance','Very low','Low–moderate'],
+ ['8. Data, information &amp; intelligence','Very low','High'],
+ ['9. Work health, safety &amp; wellbeing','Very low','High'],
+ ['10. Workforce &amp; capability','Low–moderate','High'],
+ ['11. Operations, continuity &amp; delivery','Low–moderate','Moderate'],
+ ['12. Financial sustainability &amp; value for money','Low–moderate','Moderate']
+];
+function appChip(v){
+  const map={'Very low':'vlow','Low':'low','Low–moderate':'low','Moderate':'medium','Moderate–high':'high','High':'high','Low–moderate ':'low'};
+  return '<span class="chip '+(map[v]||'medium')+'">'+v+'</span>';
+}
+function buildAppetite(){
+  const b=document.getElementById('appetiteRows'); if(!b) return;
+  b.innerHTML=APPETITE.map(r=>'<tr class="app-row"><td>'+r[0]+'</td><td>'+appChip(r[1])+'</td><td>'+appChip(r[2])+'</td></tr>').join('');
+}
+
+/* ============ CATEGORY EXPLORER (Appendix G) ============ */
+const CATS=[
+ {n:1,name:'Regulatory effectiveness &amp; outcomes',ra:'Low',oa:'High',what:'Whether NRAR detects, prioritises and responds to the right risks and achieves its regulatory outcomes.',risks:[
+   ['Regulatory effectiveness','Regulation does not achieve its intended outcomes — inconsistent enforcement, risk-based regulation not applied in practice, serious non-compliance missed.'],
+   ['Regulatory intelligence &amp; risk assessment','NRAR fails to identify, prioritise or target the right entities, catchments or behaviours — catchment risk assessment, licence-holder scoring, analytics, campaign targeting.'],
+   ['Monitoring &amp; surveillance','Monitoring activities are insufficient, poorly targeted or unreliable — meter checks, field inspections, remote sensing, desktop review.'],
+   ['Coverage of the regulated population','Effort concentrates on reactive enforcement and campaigns, leaving the broad licence base without systematic, sampling-based oversight.']
+ ]},
+ {n:2,name:'Regulated entity behaviour &amp; compliance',ra:'Low–moderate',oa:'Moderate–high',what:"The behaviour and compliance capability of water users, and NRAR's influence over it.",risks:[
+   ['Compliance behaviour risk',"The risk profile created by an entity's own pattern of compliance behaviour — history of breaches, late reporting, repeated minor non-compliance."],
+   ['Intent &amp; integrity risk','Deliberate rather than inadvertent non-compliance — meter tampering, take during cease-to-flow, false reporting, avoiding inspection.'],
+   ['Capability &amp; systems risk (entity)','A licence holder lacks the systems or capability to comply, rather than the intent not to — calls for education, not punitive enforcement.'],
+   ['Financial &amp; market pressure risk','Market and financial conditions create an incentive to breach — drought stress, high debt, incentive to over-extract under scarcity.'],
+   ['Water market &amp; industry risk','Instability, distortion or misconduct in the water market undermines sustainable management and regulatory integrity.']
+ ]},
+ {n:3,name:'Enforcement &amp; statutory decision-making',ra:'Very low',oa:'Moderate',what:'The lawfulness, consistency, proportionality and defensibility of enforcement and statutory decisions.',risks:[
+   ['Statutory decision &amp; delegation management','Decisions made without proper authority, procedural fairness or legal foundation — delegation registers not current or not followed.'],
+   ['Compliance assessment &amp; decision-making','Assessments inconsistent, poorly evidenced or incorrectly decided — this is where legal defensibility is determined.'],
+   ['Enforcement &amp; escalation','Responses inconsistent, delayed or disproportionate — notices, penalties, prosecution referral thresholds.'],
+   ['Evidence management &amp; case handling','Evidence improperly managed, documented or disclosed — chain of custody, case-file integrity, disclosure.'],
+   ['Legal challenge / judicial review','A court finds decision-making procedurally defective — one of the most consequential single risks NRAR carries.']
+ ]},
+ {n:4,name:'Environmental, catchment &amp; cultural outcomes',ra:'Very low',oa:'Moderate–high',what:'Harm to water resources, catchments, communities and Aboriginal cultural values.',risks:[
+   ['Watercourse condition risk','Physical, ecological and hydrological condition of rivers and aquifers — cease-to-flow, drought stress, erosion, algal blooms.'],
+   ['Hydrological variability &amp; climate risk','Climate-driven variability and extreme events — a system driver of compliance behaviour, not an internal operational risk.'],
+   ['Cultural values &amp; First Nations water rights','A distinct dimension of harm with its own knowledge holders and legal context. Engage via MLDRIN protocols and DCCEEW Regional Water Strategies.','MLDRIN / Regional Water Strategy'],
+   ['Catchment sensitivity risk','Environmentally sensitive catchments — Ramsar wetlands, drinking-water catchments — need a lower-tolerance posture.'],
+   ['Geographic enforcement complexity','Remoteness, terrain or dispersion increases detection difficulty, surveillance cost and response delay.']
+ ]},
+ {n:5,name:'Public trust, fairness &amp; reputation',ra:'Very low',oa:'Moderate',what:"Public confidence in NRAR's fairness, competence, transparency and independence.",risks:[
+   ['Stakeholder trust, reputation &amp; public confidence','Reputation, credibility or social licence damaged through actions, inaction, decisions or external events.'],
+   ['Perceived fairness','Processes perceived as unfair, opaque or disproportionate even where lawfully correct — perception is distinct from actual fairness.'],
+   ['Social &amp; cultural expectations','Changing or unmet community and First Nations expectations undermine legitimacy, authority or effectiveness.']
+ ]},
+ {n:6,name:'Independence &amp; integrity',ra:'Very low',oa:'Low–moderate',what:'Regulatory capture, conflicts of interest, bias, fraud, corruption and misconduct.',risks:[
+   ['Regulatory capture','Independence eroded through undue influence — typically gradual and not detectable until embedded in decision patterns.'],
+   ['Conflicts of interest','Personal, financial or professional interests influence — or appear to influence — decisions. Structurally high in small communities.'],
+   ['Bias or inconsistency','Powers applied unevenly across entities, regions or licence types — both a legal exposure and a reputational risk.'],
+   ['Fraud &amp; corruption (internal)','Financial loss or integrity failure from internal misconduct — procurement fraud, expense misuse, bribery.']
+ ]},
+ {n:7,name:'Legal, regulatory &amp; government compliance',ra:'Very low',oa:'Low–moderate',what:'Compliance with legislation, delegations, government policy and Treasury requirements.',risks:[
+   ['Internal breach (laws &amp; NSW gov obligations)','Non-compliance as an employer and part of the NSW Government, or with internal standards.'],
+   ['Statutory function compliance','Failure to comply with applicable laws and procedural requirements — directly threatens legitimacy and defensibility.'],
+   ['Common law liability','Liability for damages from negligence or wrongful acts, including class actions alleging harm from NRAR acts or omissions.'],
+   ['Legal risk — contracts','Transactions or agreements not enforceable under law — a governance failure beyond the direct financial exposure.']
+ ]},
+ {n:8,name:'Data, information &amp; intelligence',ra:'Very low',oa:'High',what:'The quality, integrity, security, availability and governance of data, information and evidence — including AI.',risks:[
+   ['Information &amp; data quality','Information inaccurate, incomplete, late or insecure — sits upstream of almost every regulatory function.'],
+   ['ICT infrastructure &amp; asset management','Technology inadequate, ageing, unsupported or over-reliant on third parties.'],
+   ['Information security, privacy &amp; access control','Data accessed, used or disclosed without authorisation — cyber, breach, insider misuse.'],
+   ['Systems availability &amp; resilience','Critical systems unavailable when needed, or not restorable after disruption.'],
+   ['System integrity &amp; integration','Data across systems inaccurate or inconsistent — siloed systems prevent intelligence-led regulation.'],
+   ['Artificial intelligence &amp; automated decision support','AI produces unreliable, biased, unexplainable or unlawful outcomes, or is deployed without governance. Control is the NSW AI Assessment Framework.','NSW AI Assessment Framework'],
+   ['Records &amp; information management','Records not created, maintained or retained to support transparency and defensibility — the evidentiary backbone.'],
+   ['Mobile &amp; field technology risk','Field devices — theft, offline data loss, weak encryption, connectivity failure in remote areas.']
+ ]},
+ {n:9,name:'Work health, safety &amp; wellbeing',ra:'Very low',oa:'High',what:'Physical and psychological health and safety of staff, contractors and others affected by NRAR\'s work.',risks:[
+   ['Physical safety risk (field operations)','Injury during inspections, investigations or enforcement — remote visits, hostile landholders, terrain, working alone.'],
+   ['Psychological health &amp; wellbeing risk','Mental health from regulatory pressure, conflict exposure, court stress, fatigue and burnout.'],
+   ['Health &amp; safety risk (premises-based)','Workplace risks — slips/trips/falls, unsafe plant, ergonomics, evacuation.'],
+   ['Security risk (physical security)','Unauthorised access, theft or harm at premises or in the field — some stakeholders may be hostile.']
+ ]},
+ {n:10,name:'Workforce &amp; capability',ra:'Low–moderate',oa:'High',what:'Capability, capacity, conduct and stability of the workforce.',risks:[
+   ['Capability &amp; skills risk','Staff lack the technical, regulatory, legal or analytical capability — a regulator cannot be stronger than its officers.'],
+   ['Workforce capacity risk','Insufficient staff or time to meet obligations — backlogs, delayed investigations, drought surge.'],
+   ['Workforce stability &amp; retention risk','High turnover or loss of key personnel — institutional knowledge leaves with departing staff.'],
+   ['Training &amp; competency management risk','Training not systematic or aligned to capability — must be able to evidence officer competence if challenged in court.'],
+   ['Workforce planning &amp; succession risk','Failure to plan for future capability needs — succession, surge resourcing, emerging analytical skills.'],
+   ['Culture &amp; organisational maturity','Behaviours, leadership and systems not developed enough to support lawful, independent, risk-based regulation.']
+ ]},
+ {n:11,name:'Operations, continuity &amp; delivery',ra:'Low–moderate',oa:'Moderate',what:'Reliable delivery of strategy and core operations, including business continuity and physical sites.',risks:[
+   ['Strategy delivery','Failure to deliver strategic objectives or reform commitments to time or quality.'],
+   ['Project delivery &amp; change management','Projects poorly designed, governed or delivered — scope creep, weak governance, change not embedded.'],
+   ['Procurement &amp; third-party risk','Suppliers or third parties do not deliver in a way that supports lawful, effective regulation.'],
+   ['Business continuity &amp; site disruption','Critical functions disrupted or halted — a regulator must operate continuously.'],
+   ['Geographic &amp; physical location risk','Risks from where offices and sites sit — flood, bushfire, remoteness, infrastructure dependency.']
+ ]},
+ {n:12,name:'Financial sustainability &amp; value for money',ra:'Low–moderate',oa:'Moderate',what:'Financial management, procurement, fraud prevention and value for money.',risks:[
+   ['Strategic financial sustainability','Long-term instability from structural factors — shifting fee base, unfunded function expansion.'],
+   ['Funding adequacy','Funding insufficient to deliver statutory functions — a regulator that cannot fund core functions is not independent in practice.'],
+   ['Legal liability &amp; litigation cost','Financial exposure from legal action — a few major cases can consume a large share of the budget.'],
+   ['Compliance &amp; enforcement cost blowout','Major investigations or prosecutions exceed budget — needs strong case-selection governance.'],
+   ['Procurement &amp; contract management','Loss from poor contract oversight — vendor lock-in, ICT overruns, consultant dependency.']
+ ]}
+];
+function catChip(v){const map={'Very low':'vlow','Low':'low','Low–moderate':'low','Moderate':'medium','Moderate–high':'high','High':'high'};return '<span class="chip '+(map[v]||'medium')+'" title="appetite">'+v+'</span>';}
+function buildCats(){
+  const host=document.getElementById('catList'); if(!host) return;
+  host.innerHTML=CATS.map(cat=>{
+    const risks=cat.risks.map(r=>'<div class="named-risk"><div class="nr-t">'+r[0]+(r[2]?'<span class="instrument-flag">'+r[2]+'</span>':'')+'</div><div class="nr-d">'+r[1]+'</div></div>').join('');
+    return '<div class="cat-item"><div class="cat-head" onclick="this.parentNode.classList.toggle(\'open\')">'+
+      '<div class="cat-num">'+cat.n+'</div><div class="cat-name">'+cat.name+'</div>'+
+      '<div class="cat-app">'+catChip(cat.ra)+catChip(cat.oa)+'</div><div class="cat-arrow">▶</div></div>'+
+      '<div class="cat-body"><div class="cb-what">'+cat.what+'</div>'+risks+'</div></div>';
+  }).join('');
+}
+
+/* ============ GLOSSARY (Appendix F) ============ */
+const GLOSS=[
+ ['Accountable Authority','The person or body responsible under the Government Sector Finance Act 2018 for the agency\'s systems of risk management, internal control and assurance.'],
+ ['Appetite (risk appetite)','The amount and type of risk NRAR is willing to take in pursuit of its objectives. A posture that drives control strength and escalation — not a maximum residual rating.'],
+ ['Appetite breach','A position where residual risk is outside appetite and tolerance, requiring escalation and either treatment or informed acceptance.'],
+ ['Assurance','Confirmation that risks are managed and controls are working, provided by management (Lines 1 and 2) or independently (Line 3).'],
+ ['Consequence','The outcome of an event, rated across seven domains.'],
+ ['Control','An action, process, system or behaviour that prevents, detects or corrects a risk.'],
+ ['Control effectiveness','The extent to which a control is well designed and operating as intended. Rated on six levels: Effective, Substantially effective, Partially effective, Limited, Weak, Ineffective.'],
+ ['Control owner','The person accountable for a specific control being in place and operating.'],
+ ['Enterprise Risk Register','The top-tier register of strategic and material risks across all categories, visible to the Board.'],
+ ['Escalation','Raising a risk to a higher level when it is High or Critical, breaches appetite, or has a failed control.'],
+ ['Inherent risk','The level of risk before controls are considered.'],
+ ['Informed acceptance','A documented, conscious decision to retain a residual risk that cannot be reduced further at proportionate cost.'],
+ ['Key performance indicator (KPI)','A measure of how well an objective or process is performing.'],
+ ['Key risk indicator (KRI)','A measure that gives early warning of a changing risk.'],
+ ['Likelihood','How likely an event is to occur, rated on a five-level scale.'],
+ ['Lines of defence','The model that distributes risk accountability: Line 1 owns and manages; Line 2 oversees and challenges; Line 3 provides independent assurance.'],
+ ['Material risk','A risk significant enough to warrant Executive and Board attention.'],
+ ['PIRI','Plan–Implement–Review–Improve — NRAR\'s continuous risk management cycle.'],
+ ['Residual risk','The level of risk after existing, effective controls are considered. The rating that is managed and compared to appetite.'],
+ ['Risk','The effect of uncertainty on objectives, including both threats and opportunities.'],
+ ['Risk assessment','The process of identifying, analysing and evaluating risk.'],
+ ['Risk criteria','The likelihood, consequence and rating definitions used to assess risk.'],
+ ['Risk Management Platform','NRAR\'s operational risk tool. Implements the framework\'s 5×5 grid as a direct cell lookup; aligned with the appendix criteria.'],
+ ['Risk owner','The person accountable for managing a specific risk.'],
+ ['Risk register','A record of risks, their ratings, controls, treatments and owners.'],
+ ['Risk and control self-assessment (RCSA)','A structured review by a team of its own risks and the effectiveness of its controls.'],
+ ['SFAIRP','"So far as is reasonably practicable" — the standard of risk reduction required for work health and safety risks.'],
+ ['Target residual risk','The lowest residual level achievable with proportionate, reasonable controls.'],
+ ['Three lines of defence','See "Lines of defence".'],
+ ['Tolerance','The residual rating bands (Critical, High, Medium, Low) that trigger a defined response.'],
+ ['Treatment','Action taken to modify a risk.']
+];
+function renderGloss(q){
+  q=(q||'').toLowerCase().trim();
+  const list=GLOSS.filter(g=>!q||g[0].toLowerCase().includes(q)||g[1].toLowerCase().includes(q));
+  const host=document.getElementById('glossList');
+  if(!list.length){host.innerHTML='<div class="gloss-empty">No terms match "'+q+'".</div>';return;}
+  host.innerHTML=list.map(g=>'<div class="gloss-item"><div class="g-term">'+g[0]+'</div><div class="g-def">'+g[1]+'</div></div>').join('');
+}
+
+/* ============ QUIZ ============ */
+const QUIZ=[
+ {q:'A risk is minor on six consequence domains but severe on one. How is it rated?',
+  o:['Averaged across the seven domains','Against the severe domain — highest consequence wins','Minor, because most domains are minor','It cannot be rated until domains agree'],
+  a:1,e:'A risk is rated against whichever consequence domain produces the worst outcome, so two assessors reach the same result.'},
+ {q:'Risk appetite is best described as…',
+  o:['The maximum residual rating a risk may reach','A posture — how much risk NRAR will take — that drives control strength and escalation','A synonym for tolerance','A fixed number set by the Board each year'],
+  a:1,e:'Appetite is a posture, not a residual-rating ceiling. Because NRAR\'s work is serious, the best residual most risks reach is Medium — a low appetite doesn\'t mean every residual must be Low.'},
+ {q:'Who may formally accept a High residual risk?',
+  o:['Any risk owner','A Director or senior manager','The relevant Executive Director / Executive','Only the Board'],
+  a:2,e:'Draft delegations: Low → manager/risk owner; Medium → Director/senior manager; High → relevant Executive Director/Executive; Critical → CRO with Board visibility.'},
+ {q:'A Medium residual with effective controls already at their practical floor is…',
+  o:['A control failure that must be treated','Within appetite — monitor, not treat','Automatically escalated to the Board','Above appetite and must be avoided'],
+  a:1,e:'A residual above appetite is a prompt to check the controls and target — not an automatic finding that controls failed. Where residual equals target, the risk is managed as well as it reasonably can be.'},
+ {q:'Which control ratings justify reducing a risk from inherent to residual?',
+  o:['Any rating except Ineffective','Effective or Substantially effective only','Partially effective and above','All ratings, proportionally'],
+  a:1,e:'Only Effective or Substantially effective controls justify a residual reduction. Lower ratings indicate a control gap requiring treatment or documented informed acceptance.'},
+ {q:'A risk is assessed High at residual. What must happen?',
+  o:['Note it in the branch register only','Escalate to the next tier, onto the Enterprise Register, and into Board reporting','Wait for the annual review','Accept it automatically'],
+  a:1,e:'A residual High or Critical, or any appetite breach, escalates to the next tier, onto the Enterprise Register, and into Board reporting.'},
+ {q:'For NRAR\'s use of AI in regulatory work, the required control is…',
+  o:['An NRAR-authored AI risk methodology','Completing and keeping current the NSW AI Assessment Framework','A one-off sign-off at go-live','No specific control — it\'s covered by data quality'],
+  a:1,e:'NRAR does not build a parallel standard. The control is a current NSW AI Assessment Framework (AIAF), escalated to the AI Review Committee where its residual rating is high or critical.'},
+ {q:'Likelihood is assessed against…',
+  o:['The worst-case scenario with no controls','The residual reality — how likely given the controls in place','The inherent position only','A fixed once-a-year assumption'],
+  a:1,e:'Likelihood is assessed against the residual reality — how likely the event is given the controls actually in place — using frequency as the anchor.'}
+];
+let quizAns=0;
+function buildQuiz(){
+  const host=document.getElementById('quizList'); if(!host) return;
+  host.innerHTML=QUIZ.map((item,qi)=>{
+    const opts=item.o.map((o,oi)=>'<button class="q-opt" onclick="answer('+qi+','+oi+')" data-q="'+qi+'" data-o="'+oi+'">'+o+'</button>').join('');
+    return '<div class="quiz-q"><div class="q-num">Question '+(qi+1)+' of 8</div><div class="q-text">'+item.q+'</div>'+opts+'<div class="q-exp" id="exp-'+qi+'"></div></div>';
+  }).join('');
+}
+function answer(qi,oi){
+  const item=QUIZ[qi];
+  const btns=document.querySelectorAll('.q-opt[data-q="'+qi+'"]');
+  if([...btns].some(b=>b.classList.contains('locked'))) return;
+  btns.forEach(b=>{
+    b.classList.add('locked');
+    const o=+b.dataset.o;
+    if(o===item.a) b.classList.add('correct');
+    else if(o===oi) b.classList.add('wrong');
+  });
+  const exp=document.getElementById('exp-'+qi);
+  exp.textContent=(oi===item.a?'Correct. ':'Not quite. ')+item.e; exp.classList.add('show');
+  if(oi===item.a) quizAns++;
+  updateQuizScore();
+}
+function updateQuizScore(){
+  const answered=document.querySelectorAll('.q-opt.locked').length? new Set([...document.querySelectorAll('.q-opt.locked')].map(b=>b.dataset.q)).size:0;
+  const s=document.getElementById('quizScore'); s.classList.add('show');
+  document.getElementById('quizNum').textContent=quizAns;
+  let msg='Answered '+answered+' of 8.';
+  if(answered===8){ msg = quizAns===8?'Full marks — you\'ve got the framework cold.': quizAns>=6?'Strong. Revisit the modules on any you missed.':'Worth another pass through the core modules.'; }
+  document.getElementById('quizMsg').textContent=msg;
+}
+
+/* ============ SCENARIO ============ */
+const STEPS=[
+ ['Step 1 · Identify &amp; classify (Plan)','Which categories does this risk touch?','Primarily Category 3 (Enforcement &amp; statutory decision-making — legal challenge / judicial review) and Category 8 (Data — information &amp; data quality, system integrity). A single risk can sit across more than one category; classify against the taxonomy and pick the master category that best fits, noting the others.'],
+ ['Step 2 · Rate it (Plan)','What\'s the likely rating?','Consequence is Major to Severe on the regulatory/legal domain (a successful judicial review can invalidate a class of decisions) — highest consequence wins. Likelihood turns on the controls actually in place; with no data-sharing agreement or certification standard, this is realistically Possible. That lands around High–Critical residual.'],
+ ['Step 3 · Assess the controls (Plan → Implement)','Are the current controls effective?','Informal staff relationships and ad-hoc data requests are weak by design and inconsistently implemented — Partially effective at best, with a genuine gap where "no formal agreement" means no effective control. Lower-than-Substantial ratings can\'t justify a residual reduction, so the residual stays high.'],
+ ['Step 4 · Decide the response (Implement)','Treat, or accept?','This is a tolerance breach and a control gap, so treatment is required — not acceptance. Reduce consequence and likelihood by executing a data-sharing agreement, an evidentiary certification standard, and an outage-notification protocol. Record a treatment plan with an owner, due dates and target residual.'],
+ ['Step 5 · Escalate &amp; report (Review)','Who needs to see this?','A High/Critical residual escalates to the next tier, onto the Enterprise Register, and into Board reporting. Given a capable legal community is watching, this warrants active senior oversight until the residual is reduced.'],
+ ['Step 6 · Close the loop (Improve)','What happens after treatment?','Once controls are in place and evidenced, re-rate on a residual basis, confirm the new residual is at or near target, and capture the lesson — a structural data dependency needs a governed instrument, not informal relationships — so it feeds the next Plan.']
+];
+function buildScenario(){
+  const host=document.getElementById('scenarioSteps'); if(!host) return;
+  host.innerHTML=STEPS.map((s,i)=>'<div class="card"><div class="card-header"><h3>'+s[0]+'</h3><span class="src">think first</span></div><div class="card-body"><p style="font-weight:600;color:var(--navy)">'+s[1]+'</p><button class="btn btn-secondary btn-sm" style="margin:8px 0" onclick="var e=this.nextElementSibling;e.style.display=e.style.display===\'block\'?\'none\':\'block\';this.textContent=e.style.display===\'block\'?\'Hide model answer\':\'Reveal model answer\'">Reveal model answer</button><p style="display:none;line-height:1.6;color:var(--muted);margin:0">'+s[2]+'</p></div></div>').join('');
+}
+
+/* ============ INIT ============ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildMini();
+  buildRatingGrid('ratingGrid','ratingReadout',{lockMode:false});
+  buildRatingGrid('simGrid','simReadout',{lockMode:true});
+  buildCtrlGrid('ctrlGrid','ctrlReadout',{lockMode:false});
+  buildCtrlGrid('simCtrlGrid','simCtrlReadout',{lockMode:true});
+  buildAppetite(); buildCats(); renderGloss(''); buildQuiz(); buildScenario();
+  setPiri('plan');
+  refreshProgress();
+});
+
+</script>
+</body>
+</html>
