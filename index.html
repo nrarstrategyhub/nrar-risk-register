@@ -1809,6 +1809,99 @@ const SP = {
 };
 
 // ════════════════════════════════════════════════════════════════════════
+// SHAREPOINT STATE SYNC (Phase 2) — whole register state as versioned JSON
+// file in a document library. Library versioning = automatic audit history.
+// ════════════════════════════════════════════════════════════════════════
+const SP_SYNC = {
+  folder: '/sites/MST_NRAR_NRARStrategyHub/Shared Documents/Risk Register Data',
+  file: 'state.json',
+  enabled: false,       // becomes true after sign-in + successful setup
+  pushTimer: null,
+  lastPush: 0,
+
+  setStatus(txt, ok=true){
+    let el = document.getElementById('sp-sync-status');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'sp-sync-status';
+      el.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:9000;background:#002664;color:white;font-size:11px;font-weight:600;padding:6px 12px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.25);font-family:\'Public Sans\',sans-serif;opacity:.92';
+      document.body.appendChild(el);
+    }
+    el.style.background = ok ? '#002664' : '#8c1a0e';
+    el.textContent = txt;
+  },
+
+  async ensureFolder(){
+    const check = await fetch(`${SP.url}/_api/web/GetFolderByServerRelativeUrl('${encodeURIComponent(this.folder)}')`, { headers: SP.headers() });
+    if (check.ok) return true;
+    await SP.getDigest();
+    const r = await fetch(`${SP.url}/_api/web/folders`, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json;odata=verbose', 'Content-Type': 'application/json;odata=verbose', 'X-RequestDigest': SP.digest, 'Authorization': 'Bearer ' + SP.token },
+      body: JSON.stringify({ '__metadata': { 'type': 'SP.Folder' }, 'ServerRelativeUrl': this.folder })
+    });
+    return r.ok;
+  },
+
+  async pull(){
+    const r = await fetch(`${SP.url}/_api/web/GetFileByServerRelativeUrl('${encodeURIComponent(this.folder + '/' + this.file)}')/$value?t=${Date.now()}`, { headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + SP.token } });
+    if (r.status === 404) return null;          // first run — no shared state yet
+    if (!r.ok) throw new Error('Pull failed: ' + r.status);
+    return await r.json();
+  },
+
+  async push(){
+    await SP.getDigest();
+    const body = JSON.stringify(state);
+    const r = await fetch(`${SP.url}/_api/web/GetFolderByServerRelativeUrl('${encodeURIComponent(this.folder)}')/Files/add(url='${this.file}',overwrite=true)`, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json;odata=verbose', 'X-RequestDigest': SP.digest, 'Authorization': 'Bearer ' + SP.token },
+      body
+    });
+    if (!r.ok) throw new Error('Push failed: ' + r.status);
+    this.lastPush = Date.now();
+  },
+
+  schedulePush(){
+    if (!this.enabled) return;
+    clearTimeout(this.pushTimer);
+    this.pushTimer = setTimeout(async () => {
+      try {
+        this.setStatus('Syncing…');
+        await this.push();
+        this.setStatus('Synced to SharePoint · ' + new Date().toLocaleTimeString());
+      } catch(e) {
+        this.setStatus('Sync failed — working locally', false);
+      }
+    }, 2000);
+  },
+
+  async boot(){
+    try {
+      this.setStatus('Connecting to SharePoint…');
+      const ok = await this.ensureFolder();
+      if (!ok) { this.setStatus('SharePoint unavailable — working locally', false); return; }
+      const remote = await this.pull();
+      if (remote && remote.registers && Object.keys(remote.registers).length > 0) {
+        // Shared state exists — it is the source of truth
+        Object.keys(state).forEach(k => { if (remote[k] !== undefined) state[k] = remote[k]; });
+        saveState();               // refresh local cache (does not re-push: guarded below)
+        if (typeof renderAll === 'function') renderAll();
+        this.setStatus('Synced to SharePoint · shared register loaded');
+      } else {
+        // First ever run — publish local state as the starting shared register
+        await this.push();
+        this.setStatus('Shared register created on SharePoint');
+      }
+      this.enabled = true;
+    } catch(e) {
+      this.setStatus('SharePoint sync unavailable — working locally', false);
+    }
+  }
+};
+window.SP_SYNC = SP_SYNC;
+
+// ════════════════════════════════════════════════════════════════════════
 // STATE — localStorage
 // ════════════════════════════════════════════════════════════════════════
 const CACHE_KEY = 'nrar_register_v4';
@@ -1826,6 +1919,7 @@ let state = {
 
 function saveState() {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); } catch(e) {}
+  try { SP_SYNC.schedulePush(); } catch(e) {}
 }
 
 function loadState() {
@@ -25610,6 +25704,7 @@ function confirmEscalation() {
   function reveal() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-root').style.display = 'contents';
+    try { SP_SYNC.boot(); } catch(e) {}
   }
 
   async function acquireToken(app, account) {
