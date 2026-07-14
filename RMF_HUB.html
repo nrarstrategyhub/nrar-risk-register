@@ -251,11 +251,71 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 </style>
 </head>
 <body>
+<!-- ═══ MICROSOFT 365 SIGN-IN GATE ═══ -->
+<div id="msal-gate" style="position:fixed;inset:0;z-index:99999;background:var(--navy,#002664);display:flex;align-items:center;justify-content:center;font-family:'Public Sans',sans-serif">
+  <div style="background:white;border-radius:12px;padding:40px 36px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)">
+    <div style="width:56px;height:56px;background:#002664;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:white;margin:0 auto 18px;letter-spacing:-0.5px">NR</div>
+    <div style="font-size:11px;font-weight:600;color:#146cfd;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Natural Resources Access Regulator</div>
+    <h1 style="font-size:20px;font-weight:600;color:#002664;margin:0 0 4px;line-height:1.2">Risk Management Hub</h1>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 28px;font-weight:300">Sign in with your NRAR Microsoft 365 account to continue</p>
+    <div id="gate-error" style="display:none;background:#fdecea;color:#c0392b;border:1px solid #f5c5c2;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;margin-bottom:14px;text-align:left"></div>
+    <button onclick="hubLogin()" style="width:100%;padding:11px;background:#002664;color:white;border:none;border-radius:7px;font-size:14px;font-weight:600;font-family:'Public Sans',sans-serif;cursor:pointer" onmouseover="this.style.background='#001a4a'" onmouseout="this.style.background='#002664'">Sign in with Microsoft →</button>
+    <p style="font-size:11px;color:#9ca3af;margin-top:20px;font-weight:300">OFFICIAL · NRAR Internal Use Only</p>
+  </div>
+</div>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"
+        onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';document.head.appendChild(s);"></script>
+<script>
+(function(){
+  const MSAL_CONFIG = {
+    auth: {
+      clientId:    'd8fd44be-6263-4e73-97cd-4313ea98efec',
+      authority:   'https://login.microsoftonline.com/96ef8821-2a39-471c-b89a-67b0833dd3b9',
+      redirectUri: window.location.origin + window.location.pathname
+    },
+    cache: { cacheLocation: 'localStorage' }
+  };
+  const SCOPE = ['https://environmentnswgov.sharepoint.com/Sites.ReadWrite.All'];
+  let app = null;
+  function showErr(m){ const e=document.getElementById('gate-error'); if(e){ e.textContent=m; e.style.display='block'; } }
+  function getApp(){
+    if (app) return app;
+    if (typeof msal === 'undefined'){ showErr('Microsoft sign-in library could not load. Check your network and refresh.'); return null; }
+    app = new msal.PublicClientApplication(MSAL_CONFIG);
+    return app;
+  }
+  function unlock(){ const g=document.getElementById('msal-gate'); if(g) g.remove(); }
+  async function hubLogin(){
+    const e=document.getElementById('gate-error'); if(e) e.style.display='none';
+    const a=getApp(); if(!a) return;
+    try{
+      await a.initialize();
+      let accts=a.getAllAccounts();
+      if(accts.length===0){ await a.loginPopup({ scopes: SCOPE }); }
+      unlock();
+    }catch(err){ showErr('Sign-in failed or was cancelled: '+(err.errorCode||err.message||'unknown')+'. If a popup was blocked, allow popups and retry.'); }
+  }
+  window.hubLogin = hubLogin;
+  window.addEventListener('load', async ()=>{
+    const a=getApp(); if(!a) return;
+    try{
+      await a.initialize();
+      await a.handleRedirectPromise().catch(()=>{});
+      if(a.getAllAccounts().length>0) unlock();   // already signed in via the Risk Register — no prompt
+    }catch(err){ /* stay gated */ }
+  });
+})();
+</script>
 <div id="sidebar">
   <div class="sidebar-logo">
     <div class="org">NRAR</div>
     <div class="title">Risk Management Hub</div>
     <div class="sub">Learning &amp; capability</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Platform</div>
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="icon">←</span>Back to Risk Register</div>
   </div>
 
   <div class="nav-section">

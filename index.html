@@ -477,6 +477,10 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
     <div class="nav-item" onclick="showPage('heatmap')" data-page="heatmap"><span class="icon">🗺</span>Risk Heat Map</div>
   </div>
   <div class="nav-section">
+    <div class="nav-label">Learning</div>
+    <div class="nav-item" onclick="window.location.href='RMF_HUB.html'"><span class="icon">🎓</span>RMF Learning Hub</div>
+  </div>
+  <div class="nav-section">
     <div class="nav-label">Change Management</div>
     <div class="nav-item" onclick="showPage('changes')" data-page="changes"><span class="icon">⚙</span>Change Register<span class="badge hidden" id="changes-badge">0</span></div>
     <div class="nav-item" onclick="showPage('bpog')" data-page="bpog"><span class="icon">📋</span>COG Agenda <span style="font-size:9px;opacity:0.45;font-style:italic">(Coming Soon)</span><span class="badge hidden" id="bpog-badge">0</span></div>
@@ -25583,7 +25587,7 @@ function confirmEscalation() {
       authority:   'https://login.microsoftonline.com/96ef8821-2a39-471c-b89a-67b0833dd3b9',
       redirectUri: window.location.origin + window.location.pathname
     },
-    cache: { cacheLocation: 'sessionStorage' }
+    cache: { cacheLocation: 'localStorage' }
   };
   const SP_SCOPE = ['https://environmentnswgov.sharepoint.com/Sites.ReadWrite.All'];
   let msalApp = null;
