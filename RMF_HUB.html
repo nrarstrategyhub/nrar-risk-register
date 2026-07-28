@@ -248,11 +248,50 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 .link-card p{font-size:11.5px;color:var(--muted);margin-top:2px}
 
 .demo-banner{background:var(--medium-lt);color:var(--medium);font-size:11px;font-weight:600;text-align:center;padding:6px;letter-spacing:.3px}
+
+/* raise-a-risk page */
+.raise-hero{background:linear-gradient(135deg,var(--accent-dk),var(--teal02));border-radius:12px;padding:26px 30px;color:#fff;margin-bottom:22px;display:flex;align-items:center;gap:20px}
+.raise-hero .rh-ico{font-size:38px;flex-shrink:0}
+.raise-hero h1{font-size:22px;font-weight:700;line-height:1.2}
+.raise-hero p{font-size:13px;color:rgba(255,255,255,0.8);margin-top:5px}
+.steps{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.step{display:flex;gap:16px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;align-items:flex-start}
+.step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step-body h3{font-size:14px;color:var(--navy);margin-bottom:5px}
+.step-body p{font-size:12.5px;color:var(--muted);line-height:1.55;margin-bottom:6px}
+.step-body p:last-child{margin:0}
+.step-body .sub{font-size:11.5px;color:var(--muted);line-height:1.5}
+.btn-register{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:8px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:background .15s;text-decoration:none}
+.btn-register:hover{background:var(--accent-dk);color:#fff;text-decoration:none}
+.btn-register.secondary{background:var(--off);color:var(--navy);border:1px solid var(--border)}.btn-register.secondary:hover{border-color:var(--accent);color:var(--accent);background:#fff}
+.role-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:900px){.role-grid{grid-template-columns:1fr}}
+.role-card{border-radius:8px;padding:15px;border:1px solid var(--border)}
+.role-card .rc-q{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin-bottom:5px}
+.role-card h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.role-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+.role-card.yes{background:var(--accent-pale);border-color:var(--accent)}
+.role-card.no{background:#fff9f0;border-color:#e8a87c}
+.role-card.maybe{background:#fffbf0;border-color:var(--medium-vivid)}
+.faq{display:flex;flex-direction:column;gap:8px}
+.faq-item{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--navy);gap:10px;transition:background .12s}
+.faq-q:hover{background:var(--off)}
+.faq-arr{color:var(--muted);font-size:11px;flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-arr{transform:rotate(90deg)}
+.faq-a{display:none;padding:0 16px 14px;font-size:12.5px;color:var(--muted);line-height:1.6}
+.faq-item.open .faq-a{display:block}
+.what-next{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+@media(max-width:900px){.what-next{grid-template-columns:1fr 1fr}}
+.wn-step{background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center}
+.wn-step .wn-n{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.wn-step h4{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.wn-step p{font-size:11px;color:var(--muted);line-height:1.45;margin:0}
 </style>
 </head>
 <body>
 <!-- ═══ MICROSOFT 365 SIGN-IN GATE ═══ -->
-<div id="msal-gate" style="position:fixed;inset:0;z-index:99999;background:var(--navy,#002664);display:flex;align-items:center;justify-content:center;font-family:'Public Sans',sans-serif">
+<div id="msal-gate" style="position:fixed;inset:0;z-index:99999;background:#002664;display:flex;align-items:center;justify-content:center;font-family:'Public Sans',sans-serif">
   <div style="background:white;border-radius:12px;padding:40px 36px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)">
     <div style="width:56px;height:56px;background:#002664;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:white;margin:0 auto 18px;letter-spacing:-0.5px">NR</div>
     <div style="font-size:11px;font-weight:600;color:#146cfd;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Natural Resources Access Regulator</div>
@@ -301,7 +340,7 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
     try{
       await a.initialize();
       await a.handleRedirectPromise().catch(()=>{});
-      if(a.getAllAccounts().length>0) unlock();   // already signed in via the Risk Register — no prompt
+      if(a.getAllAccounts().length>0) unlock();
     }catch(err){ /* stay gated */ }
   });
 })();
@@ -321,6 +360,7 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
   <div class="nav-section">
     <div class="nav-label">Start here</div>
     <div class="nav-item active" data-page="home" onclick="go('home')"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" data-page="raise" onclick="go('raise')" style="background:rgba(46,128,142,0.18);border-left-color:var(--teal02)"><span class="icon">⚠️</span>Raise a risk</div>
     <div class="nav-item" data-page="pathways" onclick="go('pathways')"><span class="icon">🧭</span>Learning pathways</div>
   </div>
 
@@ -361,7 +401,142 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 </div>
 
 <div id="main">
+<button id="hub-back-btn" onclick="goBack()" style="display:none;position:sticky;top:10px;z-index:500;margin:10px 0 0 24px;align-items:center;gap:6px;background:white;color:#002664;border:1.5px solid #cbd5e1;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;font-family:'Public Sans',sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,38,100,.12)" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='white'">← Back</button>
 <div class="demo-banner">DEMO BUILD · content for training and review · not the controlled RMF of record</div>
+<!-- ============ RAISE A RISK ============ -->
+<div class="page" id="page-raise">
+  <div class="raise-hero">
+    <div class="rh-ico">⚠️</div>
+    <div>
+      <h1>I want to raise a risk — what do I do?</h1>
+      <p>Four steps: prepare, go to the register, fill it in, then hand it over. This page tells you exactly where to go, what you'll need, and what happens after you lodge it.</p>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Work out where your risk fits — before you open the register</h3>
+        <p>The register asks you to classify the risk against NRAR's 12-category taxonomy. Picking the right category up front keeps the data clean and makes sure your risk lands in the right register tier.</p>
+        <p class="sub">Use the Category Explorer to find the category that fits, and look at the named risks listed under it — if one sounds like what you've spotted, you're in the right place. Check the risk appetite for that category too, so you know roughly how seriously it will be treated.</p>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-register secondary" onclick="go('categories')">📂 Open Category Explorer</button>
+          <button class="btn-register secondary" onclick="go('m3')">🎯 Rate your risk first (optional)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Go to the Risk Register → Operational Register tab → Add Risk</h3>
+        <p>Most staff will raise risks in the <strong>Operational Register</strong>. If you're raising a risk that is clearly strategic or material — affecting the whole organisation, a major programme or a Board-level issue — it may go directly to the <strong>Enterprise Risk Register</strong>, but check with your manager first.</p>
+        <div class="note" style="margin:10px 0 12px">
+          <strong>Not sure which register?</strong> Default to the Operational Register. The Risk &amp; Assurance function will escalate to the Enterprise Register if the risk warrants it after assessment.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn-register" href="index.html">📊 Open Risk Register (Operational) →</a>
+          <a class="btn-register secondary" href="index.html">🏛️ Enterprise Risk Register →</a>
+        </div>
+        <p class="sub" style="margin-top:10px">Links open the Risk Register. Navigate to the relevant register tab and click <strong>Add Risk</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>What you'll be asked to fill in</h3>
+        <p>You don't need to complete the full risk record — just the initial lodgement fields. A risk owner and the Risk &amp; Assurance function will complete the rest with you.</p>
+        <table class="tbl" style="margin-top:8px"><thead><tr><th>Field</th><th>What to enter</th><th>Where to get help</th></tr></thead><tbody>
+          <tr><td class="fw">Risk name</td><td>A short, plain-English description of what could go wrong (or what opportunity might be missed)</td><td>Look at named risks in the Category Explorer for examples</td></tr>
+          <tr><td class="fw">Category</td><td>Which of the 12 categories it belongs to — from Step 1</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:10px" onclick="go('categories')">Category Explorer</button></td></tr>
+          <tr><td class="fw">Description</td><td>What is the risk, why does it exist, what could trigger it</td><td>—</td></tr>
+          <tr><td class="fw">Inherent likelihood</td><td>How likely is this <em>before</em> any controls — use the 5-level scale</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:10px" onclick="go('m3')">Module 03</button></td></tr>
+          <tr><td class="fw">Inherent consequence</td><td>How bad could it get across the 7 domains — pick the worst domain</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:10px" onclick="go('m3')">Module 03</button></td></tr>
+          <tr><td class="fw">Your name / contact</td><td>So the risk owner can follow up with you</td><td>—</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Submit and hand it over — here's what happens next</h3>
+        <p>Once you've lodged it, the process moves to the risk owner and the Risk &amp; Assurance function. Your job is done unless you're named as a control owner.</p>
+        <div class="what-next" style="margin-top:12px">
+          <div class="wn-step"><div class="wn-n">1</div><h4>Risk owner assigned</h4><p>A manager or senior leader is named as owner — accountable for managing the risk</p></div>
+          <div class="wn-step"><div class="wn-n">2</div><h4>Controls identified</h4><p>Existing controls are listed and rated for effectiveness (design × implementation)</p></div>
+          <div class="wn-step"><div class="wn-n">3</div><h4>Residual risk rated</h4><p>Risk is re-rated after controls on the 5×5 grid — this is the number that matters</p></div>
+          <div class="wn-step"><div class="wn-n">4</div><h4>Response triggered</h4><p>Medium → monitor. High/Critical → escalate, treatment plan, Executive visibility</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROLES -->
+  <div class="card"><div class="card-header"><h3>What's my role? — the three questions everyone asks</h3><span class="src">RMF · §7</span></div><div class="card-body">
+    <div class="role-grid">
+      <div class="role-card no">
+        <div class="rc-q">Am I the risk owner?</div>
+        <h4>Usually no — unless you're a manager or executive</h4>
+        <p>The risk owner is the person <strong>accountable</strong> for managing the risk. That's typically the manager responsible for the area where the risk sits, not the person who spotted it. If you're not sure, your manager can confirm. Raising a risk doesn't make you its owner.</p>
+      </div>
+      <div class="role-card maybe">
+        <div class="rc-q">Am I a control owner?</div>
+        <h4>Possibly — if you operate a specific control</h4>
+        <p>A control owner is accountable for a <strong>specific control</strong> being in place and working — for example, the person who runs a daily meter check, maintains a checklist, or manages a system. If you personally operate a control that reduces this risk, you may be named as its owner. Your manager will confirm.</p>
+      </div>
+      <div class="role-card yes">
+        <div class="rc-q">What's my role after I raise it?</div>
+        <h4>Reporter → then as directed</h4>
+        <p>You've done the most important thing: you surfaced the risk. After lodging it, your role is to <strong>respond to follow-up questions</strong> from the risk owner or Risk &amp; Assurance. If you're named as a control owner, you'll also be asked to evidence that your control is operating.</p>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FAQ -->
+  <div class="card"><div class="card-header"><h3>Frequently asked questions</h3></div><div class="card-body" style="padding-top:12px">
+    <div class="faq" id="raiseFaq">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What if I'm not sure it's a real risk — should I still raise it? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">Yes. If something is bothering you professionally, raise it. The assessment process will determine whether it's material and how to rate it. The cost of raising a risk that turns out to be minor is very low. The cost of not raising one that was real is much higher. When in doubt, raise it.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What's the difference between inherent and residual risk — and which do I fill in? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">When you first raise a risk, you fill in the <strong>inherent</strong> rating — how bad could it be with no controls in place at all. This is the baseline. The risk owner and Risk &amp; Assurance will then assess the <strong>residual</strong> rating — the level after your existing controls are taken into account. Residual is the number that's compared to appetite and triggers the response. You don't need to work out the residual yourself.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">I raised a risk months ago. What happened to it? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">Check the relevant register tab in the Risk Register — find your risk and look at its current residual rating, status and any treatment actions. If you can't find it or nothing seems to have happened, follow up with your manager or the Risk &amp; Assurance function. The framework requires that risk records are kept current — a stale entry should be flagged.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What if the risk is about my team, my manager, or something sensitive? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">Raise it. Category 6 (Independence &amp; integrity) exists precisely for risks involving conflicts of interest, capture or internal conduct. If you're not comfortable raising it through the normal register process, speak to the Risk &amp; Assurance function directly, or use NRAR's speak-up and integrity reporting channels. Risk management and integrity reporting are complementary — not competing.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">My risk is a project risk — does it go in the same place? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">Project risks go in the <strong>project risk register</strong> for that project, not the operational register. If a project risk is material — High or Critical residual, or likely to affect the broader organisation — it should also be flagged to the relevant Tier-2 or Enterprise register. Check with your project manager about what's already in place.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I rate the likelihood and consequence if I've never done it before? <span class="faq-arr">▶</span></div>
+        <div class="faq-a">Use Module 03 in this hub — it walks you through both tables with the real descriptors. For consequence, read across all 7 domains and pick the worst one. For likelihood, think about how often this kind of event actually happens in practice given any controls already in place. If you're still unsure, make your best estimate and note your reasoning — the risk owner will review it.</div>
+      </div>
+
+    </div>
+  </div></div>
+
+</div>
+
 <!-- ============ HOME ============ -->
 <div class="page active" id="page-home">
   <div class="hero"><div class="hero-inner">
@@ -371,6 +546,7 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
       <p>Risk management at NRAR is not a separate compliance exercise — it is how we make defensible decisions and protect the outcomes we exist to deliver. This hub teaches you the framework, then lets you practise it.</p>
       <button class="btn btn-primary btn-lg" onclick="go('m1')">Start Module 01 →</button>
       <button class="btn btn-secondary btn-lg" onclick="go('pathways')">Find my pathway</button>
+      <button class="btn btn-secondary btn-lg" onclick="go('raise')" style="border-color:var(--teal03);color:var(--teal03)">⚠️ Raise a risk</button>
     </div>
     <div class="mini-rate">
       <div class="mr-label">Try it — rate a risk</div>
@@ -526,19 +702,28 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 
   <div class="grid-2">
     <div class="card"><div class="card-header"><h3>Likelihood</h3><span class="src">Appendix A.1</span></div><div class="card-body" style="padding-top:8px">
-      <p style="font-size:11.5px;color:var(--muted)">Assessed against the residual reality, using frequency as the anchor.</p>
-      <table class="tbl" style="margin-top:8px"><tbody>
-        <tr><td class="fw">5 · Almost certain</td><td>More than once a year</td></tr>
-        <tr><td class="fw">4 · Likely</td><td>About once a year</td></tr>
-        <tr><td class="fw">3 · Possible</td><td>Once every 1–5 years</td></tr>
-        <tr><td class="fw">2 · Unlikely</td><td>Once every 5–10 years</td></tr>
-        <tr><td class="fw">1 · Rare</td><td>Less than once in 10 years</td></tr>
+      <p style="font-size:11.5px;color:var(--muted)">Likelihood is assessed against the residual reality — how likely the event is given the controls actually in place — using frequency as the primary anchor.</p>
+      <table class="tbl" style="margin-top:8px"><thead><tr><th>Level</th><th>Descriptor</th><th>Indicative frequency</th><th>Indicative probability</th></tr></thead><tbody>
+        <tr><td class="fw">5 · Almost certain</td><td>Expected to occur in most circumstances</td><td>More than once a year</td><td>Greater than 90%</td></tr>
+        <tr><td class="fw">4 · Likely</td><td>Will probably occur</td><td>About once a year</td><td>50–90%</td></tr>
+        <tr><td class="fw">3 · Possible</td><td>Might occur at some time</td><td>Once every 1–5 years</td><td>20–50%</td></tr>
+        <tr><td class="fw">2 · Unlikely</td><td>Could occur but is not expected</td><td>Once every 5–10 years</td><td>5–20%</td></tr>
+        <tr><td class="fw">1 · Rare</td><td>Only in exceptional circumstances</td><td>Less than once in 10 years</td><td>Less than 5%</td></tr>
       </tbody></table>
     </div></div>
-    <div class="card"><div class="card-header"><h3>Highest consequence wins</h3><span class="src">Appendix A.2 · §11</span></div><div class="card-body">
-      <p>Consequence is rated across <strong>seven domains</strong>: environmental / cultural, health &amp; safety, regulatory / legal &amp; defensibility, financial, reputation / public trust, data / information, and service delivery / operational.</p>
-      <p>You do <em>not</em> average them. A risk is rated against whichever domain produces the <strong>worst</strong> outcome — so two assessors reach the same result. A risk that is "minor" on six domains but "severe" on one is a severe risk.</p>
-      <div class="note" style="margin:8px 0 0"><strong>Financial bands are drafts</strong> — to be calibrated to NRAR's operating budget and materiality.</div>
+    <div class="card"><div class="card-header"><h3>Consequence — highest consequence wins</h3><span class="src">Appendix A.2 · §11</span></div><div class="card-body">
+      <p>Read across the row for each domain and select the level that fits. A risk is rated against whichever domain produces the <strong>worst</strong> outcome — so two assessors reach the same result. Financial bands are drafts to be calibrated to NRAR's operating budget and materiality.</p>
+      <div style="overflow-x:auto;margin-top:12px">
+      <table class="tbl" style="min-width:700px"><thead><tr><th>Consequence domain</th><th>1 · Insignificant</th><th>2 · Minor</th><th>3 · Moderate</th><th>4 · Major</th><th>5 · Severe</th></tr></thead><tbody>
+        <tr><td class="fw">Environmental / cultural</td><td>Localised, short-term effect; readily reversed</td><td>Minor harm to a water source or cultural value; short recovery</td><td>Material harm needing active remediation; medium-term recovery</td><td>Serious harm to a significant water source, ecosystem or cultural value; long recovery</td><td>Widespread or irreversible harm</td></tr>
+        <tr><td class="fw">Health &amp; safety</td><td>First-aid injury</td><td>Injury needing medical treatment; no lasting effect</td><td>Serious injury or illness; lost time; full recovery expected</td><td>Permanent disability, or multiple serious injuries</td><td>Fatality, or multiple permanent disabilities</td></tr>
+        <tr><td class="fw">Regulatory / legal &amp; defensibility</td><td>Minor procedural lapse; no effect on outcome</td><td>Decision challenged but readily defended</td><td>Decision criticised, delayed or remade</td><td>Decision found unlawful or overturned on review</td><td>Adverse court, tribunal, ICAC or inquiry finding</td></tr>
+        <tr><td class="fw">Financial</td><td>&lt; $250k</td><td>$250k – $1M</td><td>$1M – $5M</td><td>$5M – $10M</td><td>&gt; $10M</td></tr>
+        <tr><td class="fw">Reputation / public trust</td><td>Isolated complaint; no wider attention</td><td>Local media or stakeholder concern; short-lived</td><td>Sustained negative coverage or criticism</td><td>State-wide criticism; Ministerial attention</td><td>Sustained loss of public confidence; Parliamentary scrutiny</td></tr>
+        <tr><td class="fw">Data / information</td><td>Minor, isolated data error</td><td>Localised data-quality issue</td><td>Loss of confidence in a dataset; some rework</td><td>Loss, corruption or breach of important data</td><td>Loss or breach of critical regulatory data or evidence</td></tr>
+        <tr><td class="fw">Service delivery / operational</td><td>Negligible disruption</td><td>Minor delay to a process or service</td><td>Noticeable disruption; workarounds needed</td><td>Major disruption to one or more core functions</td><td>Core regulatory functions cannot operate</td></tr>
+      </tbody></table>
+      </div>
     </div></div>
   </div>
 
@@ -582,12 +767,12 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 
   <div class="card"><div class="card-header"><h3>What each rating lets you rely on</h3><span class="src">Appendix D.1</span></div><div class="card-body" style="padding-top:8px">
     <table class="tbl"><thead><tr><th>Rating</th><th>Reliance</th><th>Meaning</th></tr></thead><tbody>
-      <tr><td><span class="chip low">Effective</span></td><td class="fw">Full</td><td>Very strong design AND very strong/strong implementation. Consistently operating as intended.</td></tr>
+      <tr><td><span class="chip low">Effective</span></td><td class="fw">Full</td><td>Very strong design AND very strong or strong implementation. Controls consistently operating as intended.</td></tr>
       <tr><td><span class="chip low">Substantially effective</span></td><td class="fw">High</td><td>Strong design with strong or adequate implementation. Mature and unlikely to fail significantly.</td></tr>
       <tr><td><span class="chip medium">Partially effective</span></td><td class="fw">Partial</td><td>Adequate design but limited or inconsistent implementation. Failures have occurred or are expected.</td></tr>
-      <tr><td><span class="chip high">Limited</span></td><td class="fw">Low</td><td>Reduces some aspects of risk but likely to fail. Heavy reliance on manual workarounds.</td></tr>
-      <tr><td><span class="chip high">Weak</span></td><td class="fw">Minimal</td><td>Poor design even when used correctly. Little or no protection.</td></tr>
-      <tr><td><span class="chip critical">Ineffective</span></td><td class="fw">None</td><td>Consistently not operating as intended. Failure rates significant and unacceptable.</td></tr>
+      <tr><td><span class="chip high">Limited</span></td><td class="fw">Low</td><td>Limited design — reduces some aspects of risk but likely to fail. Heavy reliance on manual workarounds.</td></tr>
+      <tr><td><span class="chip high">Weak</span></td><td class="fw">Minimal</td><td>Poor design even when used correctly. Little or no protection. Only addresses part of the risk.</td></tr>
+      <tr><td><span class="chip critical">Ineffective</span></td><td class="fw">None</td><td>Consistently not operating as intended. Rates of failure are significant and unacceptable.</td></tr>
     </tbody></table>
   </div></div>
 
@@ -627,16 +812,16 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
   </div>
 
   <div class="card"><div class="card-header"><h3>Residual rating → required response</h3><span class="src">§8.5 · Appendix C</span></div><div class="card-body" style="padding-top:8px">
-    <table class="tbl"><thead><tr><th>Residual</th><th>Tolerance position</th><th>Required response</th></tr></thead><tbody>
-      <tr><td><span class="chip critical">Critical</span></td><td class="fw">Not acceptable</td><td>Immediate escalation. Activity stops, changes or is contained unless continuation is Executive-approved in exceptional circumstances. Documented treatment plan. Board visibility.</td></tr>
-      <tr><td><span class="chip high">High</span></td><td class="fw">Not acceptable without treatment</td><td>Escalation required. Documented treatment plan and active senior oversight until reduced or formally accepted within delegation.</td></tr>
-      <tr><td><span class="chip medium">Medium</span></td><td class="fw">Acceptable within managed operations</td><td>Defined controls and monitoring. Treat where controls are weak, the trend is deteriorating, or residual is above target. Periodic review.</td></tr>
-      <tr><td><span class="chip low">Low</span></td><td class="fw">Acceptable within routine operations</td><td>Managed through standard processes. Routine monitoring. Escalate only if the profile changes or controls fail.</td></tr>
+    <table class="tbl"><thead><tr><th>Residual</th><th>Tolerance position</th><th>Oversight &amp; review</th><th>Required response</th></tr></thead><tbody>
+      <tr><td><span class="chip critical">Critical</span></td><td class="fw">Not acceptable</td><td>CRO and Board visibility; continuous oversight until reduced.</td><td>Immediate escalation. Activity stops, changes or is contained unless continuation is approved by the appropriate Executive in exceptional circumstances. Documented treatment plan.</td></tr>
+      <tr><td><span class="chip high">High</span></td><td class="fw">Not acceptable without treatment</td><td>Executive oversight; review at least quarterly.</td><td>Escalation required. Documented treatment plan and active senior oversight until the risk is reduced or formally accepted within delegation.</td></tr>
+      <tr><td><span class="chip medium">Medium</span></td><td class="fw">Acceptable within managed operations</td><td>Management oversight; periodic review.</td><td>Maintain defined controls and monitoring. Treat where controls are weak, the trend is deteriorating, or the residual is above target.</td></tr>
+      <tr><td><span class="chip low">Low</span></td><td class="fw">Acceptable within routine operations</td><td>Routine monitoring.</td><td>Manage through standard processes and controls. Escalate only if the profile changes or controls fail.</td></tr>
     </tbody></table>
   </div></div>
 
   <div class="card"><div class="card-header"><h3>Appetite by category — the twelve at a glance</h3><span class="src">§8.4</span></div><div class="card-body" style="padding-top:8px">
-    <table class="tbl"><thead><tr><th>Risk category</th><th>Risk appetite</th><th>Opportunity appetite</th></tr></thead><tbody id="appetiteRows"></tbody></table>
+    <table class="tbl"><thead><tr><th>Risk category</th><th>Risk appetite</th><th>Opportunity appetite</th><th>In short</th></tr></thead><tbody id="appetiteRows"></tbody></table>
   </div></div>
 
   <div class="mod-nav"><button class="btn btn-secondary" onclick="go('m4')">← Module 04</button><button class="btn btn-primary" onclick="complete('m5');go('m6')">Mark complete &amp; continue →</button></div>
@@ -698,13 +883,14 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
   <div class="card"><div class="card-header"><h3>The register hierarchy</h3><span class="src">RMF · §10</span></div><div class="card-body" style="padding-top:8px">
     <table class="tbl"><thead><tr><th>Tier</th><th>Register</th><th>Scope</th><th>Owner</th></tr></thead><tbody>
       <tr><td class="fw">1</td><td class="fw">Enterprise Risk Register</td><td>Strategic &amp; material risks across all twelve categories. Board-visible.</td><td>CRO / Executive</td></tr>
-      <tr><td class="fw">2</td><td>Regulatory Risk Register</td><td>Categories 1–5</td><td>Regulatory Exec Director</td></tr>
-      <tr><td class="fw">2</td><td>WHS Register</td><td>Category 9 — field safety &amp; psychosocial</td><td>People / WHS</td></tr>
-      <tr><td class="fw">2</td><td>ICT &amp; Data Governance Register</td><td>Category 8 — data, ICT, cyber</td><td>CIO / Data</td></tr>
-      <tr><td class="fw">2</td><td>Records &amp; Information Mgmt Register</td><td>Recordkeeping, State Records, privacy</td><td>Information Governance</td></tr>
-      <tr><td class="fw">3</td><td>Branch / divisional</td><td>Optional — where not already captured by a Tier-2 register</td><td>Branch managers</td></tr>
-      <tr><td class="fw">—</td><td>Project registers</td><td>One per project; material risks feed upward</td><td>Project owners</td></tr>
-      <tr><td class="fw">—</td><td>Activity-level assessments</td><td>The operational floor — e.g. field inspection, driving, site visits</td><td>Activity leads</td></tr>
+      <tr><td class="fw">2</td><td>Regulatory Risk Register</td><td>Categories 1–5 — regulatory effectiveness, entity behaviour, enforcement and statutory decisions, environmental and cultural outcomes, public trust.</td><td>ISI</td></tr>
+      <tr><td class="fw">2</td><td>WHS Register</td><td>Category 9 — work health, safety and wellbeing, including field safety and psychosocial hazards.</td><td>WHS</td></tr>
+      <tr><td class="fw">2</td><td>ICT &amp; Data Governance Register</td><td>Category 8 — data quality, integrity, analytics and metering data — plus ICT and cyber.</td><td>ICT/ISI</td></tr>
+      <tr><td class="fw">2</td><td>Records &amp; Information Management Register</td><td>Recordkeeping, State Records obligations, and information access and privacy.</td><td>BEST</td></tr>
+      <tr><td class="fw">2</td><td>[Register Template / Placeholder]</td><td>A placeholder for one further Tier-2 register (for example integrity, legal and compliance, people, financial or business continuity) to be named when the profile warrants.</td><td>TBC</td></tr>
+      <tr><td class="fw">3</td><td>Branch / divisional registers</td><td>Optional — only where a branch's risk profile is not already captured by a Tier-2 register.</td><td>Branch managers</td></tr>
+      <tr><td class="fw">—</td><td>Project risk registers</td><td>One per project or change initiative. Material risks feed upward.</td><td>Project owners</td></tr>
+      <tr><td class="fw">—</td><td>Activity-level assessments</td><td>The operational floor — for example field inspection, driving, site visits.</td><td>Activity leads</td></tr>
     </tbody></table>
     <div class="note" style="margin-top:12px"><strong>Escalation between tiers.</strong> A risk assessed <span class="chip high">High</span> or <span class="chip critical">Critical</span> at residual, or any appetite breach, escalates to the next tier, onto the Enterprise Register, and into Board reporting. Categories 6, 7, 10, 11 and 12 are held in the Enterprise Register and in branch/project registers until a dedicated Tier-2 register is created.</div>
   </div></div>
@@ -827,11 +1013,21 @@ table.tbl td.fw{font-weight:600;color:var(--navy)}
 
 <script>
 /* ============ NAV ============ */
-function go(id){
+let _pageHistory = [];
+let _currentPage = 'home';
+function go(id, isBack){
+  if(!isBack && _currentPage && _currentPage !== id) _pageHistory.push(_currentPage);
+  _currentPage = id;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===id));
   document.getElementById('main').scrollTop=0; window.scrollTo(0,0);
+  const bb = document.getElementById('hub-back-btn');
+  if(bb) bb.style.display = (id==='home') ? 'none' : 'inline-flex';
+}
+function goBack(){
+  const prev = _pageHistory.pop() || 'home';
+  go(prev, true);
 }
 
 /* ============ PROGRESS ============ */
@@ -858,10 +1054,10 @@ const GRID=[ /* index0 = Almost certain */
  ['low','low','low','medium','high']
 ];
 const BANDSAY={
- critical:'Not acceptable. Immediate escalation; activity stops, changes or is contained unless Executive-approved. Documented treatment plan; Board visibility.',
- high:'Not acceptable without treatment. Escalate; documented treatment plan and active senior oversight until reduced or formally accepted within delegation.',
- medium:'Acceptable within managed operations. Maintain controls and monitoring; treat where controls are weak, deteriorating, or above target.',
- low:'Acceptable within routine operations. Standard controls and routine monitoring; escalate only if the profile changes or controls fail.'
+ critical:'Not acceptable. Immediate escalation. Activity stops, changes or is contained unless continuation is approved by the appropriate Executive in exceptional circumstances. Documented treatment plan. CRO and Board visibility; continuous oversight until reduced.',
+ high:'Not acceptable without treatment. Escalation required. Documented treatment plan and active senior oversight until the risk is reduced or formally accepted within delegation. Executive oversight; review at least quarterly.',
+ medium:'Acceptable within managed operations. Maintain defined controls and monitoring. Treat where controls are weak, the trend is deteriorating, or the residual is above target. Management oversight; periodic review.',
+ low:'Acceptable within routine operations. Manage through standard processes and controls. Escalate only if the profile changes or controls fail. Routine monitoring.'
 };
 const BANDNAME={critical:'CRITICAL',high:'HIGH',medium:'MEDIUM',low:'LOW'};
 
@@ -978,18 +1174,18 @@ function setPiri(k){
 
 /* ============ APPETITE BY CATEGORY (§8.4) ============ */
 const APPETITE=[
- ['1. Regulatory effectiveness &amp; outcomes','Low','High'],
- ['2. Regulated entity behaviour &amp; compliance','Low–moderate','Moderate–high'],
- ['3. Enforcement &amp; statutory decision-making','Very low','Moderate'],
- ['4. Environmental, catchment &amp; cultural outcomes','Very low','Moderate–high'],
- ['5. Public trust, fairness &amp; reputation','Very low','Moderate'],
- ['6. Independence &amp; integrity','Very low','Low–moderate'],
- ['7. Legal, regulatory &amp; government compliance','Very low','Low–moderate'],
- ['8. Data, information &amp; intelligence','Very low','High'],
- ['9. Work health, safety &amp; wellbeing','Very low','High'],
- ['10. Workforce &amp; capability','Low–moderate','High'],
- ['11. Operations, continuity &amp; delivery','Low–moderate','Moderate'],
- ['12. Financial sustainability &amp; value for money','Low–moderate','Moderate']
+ ['1. Regulatory effectiveness &amp; outcomes','Low','High','Strong appetite to improve intelligence-led targeting; low appetite for failing to detect and respond to material non-compliance.'],
+ ['2. Regulated entity behaviour &amp; compliance','Low–moderate','Moderate–high','Appetite to educate and build voluntary compliance; very low appetite for failing to act on deliberate, repeated non-compliance.'],
+ ['3. Enforcement &amp; statutory decision-making','Very low','Moderate','Very low appetite for inconsistent, delayed or poorly evidenced decisions.'],
+ ['4. Environmental, catchment &amp; cultural outcomes','Very low','Moderate–high','Very low appetite for regulatory failure contributing to material environmental or cultural harm.'],
+ ['5. Public trust, fairness &amp; reputation','Very low','Moderate','Very low appetite for actions that undermine confidence in NRAR\'s fairness and independence.'],
+ ['6. Independence &amp; integrity','Very low','Low–moderate','Very low appetite for capture, conflict of interest, bias, fraud or corruption.'],
+ ['7. Legal, regulatory &amp; government compliance','Very low','Low–moderate','Very low appetite for failing to meet statutory, government and Treasury obligations.'],
+ ['8. Data, information &amp; intelligence','Very low','High','Very low appetite for unreliable or insecure regulatory data; high appetite to improve data and analytics.'],
+ ['9. Work health, safety &amp; wellbeing','Very low','High','No appetite for unmanaged field-safety or psychosocial hazards; high appetite to improve safety capability.'],
+ ['10. Workforce &amp; capability','Low–moderate','High','Low appetite for capability gaps affecting decisions or safety; high appetite for training and development.'],
+ ['11. Operations, continuity &amp; delivery','Low–moderate','Moderate','Low appetite for disruption to core functions; appetite for operational redesign and continuity improvement.'],
+ ['12. Financial sustainability &amp; value for money','Low–moderate','Moderate','Low appetite for mismanagement or waste; appetite for investment that improves effectiveness.']
 ];
 function appChip(v){
   const map={'Very low':'vlow','Low':'low','Low–moderate':'low','Moderate':'medium','Moderate–high':'high','High':'high','Low–moderate ':'low'};
@@ -997,7 +1193,7 @@ function appChip(v){
 }
 function buildAppetite(){
   const b=document.getElementById('appetiteRows'); if(!b) return;
-  b.innerHTML=APPETITE.map(r=>'<tr class="app-row"><td>'+r[0]+'</td><td>'+appChip(r[1])+'</td><td>'+appChip(r[2])+'</td></tr>').join('');
+  b.innerHTML=APPETITE.map(r=>'<tr class="app-row"><td>'+r[0]+'</td><td>'+appChip(r[1])+'</td><td>'+appChip(r[2])+'</td><td style="color:var(--muted);font-size:11.5px">'+r[3]+'</td></tr>').join('');
 }
 
 /* ============ CATEGORY EXPLORER (Appendix G) ============ */
@@ -1210,6 +1406,12 @@ const STEPS=[
 function buildScenario(){
   const host=document.getElementById('scenarioSteps'); if(!host) return;
   host.innerHTML=STEPS.map((s,i)=>'<div class="card"><div class="card-header"><h3>'+s[0]+'</h3><span class="src">think first</span></div><div class="card-body"><p style="font-weight:600;color:var(--navy)">'+s[1]+'</p><button class="btn btn-secondary btn-sm" style="margin:8px 0" onclick="var e=this.nextElementSibling;e.style.display=e.style.display===\'block\'?\'none\':\'block\';this.textContent=e.style.display===\'block\'?\'Hide model answer\':\'Reveal model answer\'">Reveal model answer</button><p style="display:none;line-height:1.6;color:var(--muted);margin:0">'+s[2]+'</p></div></div>').join('');
+}
+
+/* ============ FAQ TOGGLE ============ */
+function toggleFaq(el){
+  const item=el.parentNode;
+  item.classList.toggle('open');
 }
 
 /* ============ INIT ============ */
