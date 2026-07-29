@@ -25705,6 +25705,11 @@ function confirmEscalation() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-root').style.display = 'contents';
     try { SP_SYNC.boot(); } catch(e) {}
+    // Deep link support: index.html#operational or #enterprise (or any page id)
+    try {
+      const h = (window.location.hash||'').replace('#','').trim();
+      if (h && document.getElementById('page-'+h)) showPage(h);
+    } catch(e) {}
   }
 
   async function acquireToken(app, account) {
