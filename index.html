@@ -25679,7 +25679,7 @@ function confirmEscalation() {
     auth: {
       clientId:    'd8fd44be-6263-4e73-97cd-4313ea98efec',
       authority:   'https://login.microsoftonline.com/96ef8821-2a39-471c-b89a-67b0833dd3b9',
-      redirectUri: window.location.origin + window.location.pathname
+      redirectUri: window.location.origin + window.location.pathname.replace(/[^/]*\.html?$/i,'')
     },
     cache: { cacheLocation: 'localStorage' }
   };
