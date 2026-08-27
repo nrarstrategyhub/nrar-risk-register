@@ -272,6 +272,10 @@ textarea.form-control{resize:vertical;min-height:72px}
 .form-hint{font-size:10.5px;color:var(--muted);margin-top:3px}
 
 /* MODAL */
+.udev-btn{display:flex;align-items:center;gap:7px;width:100%;text-align:left;background:rgba(255,255,255,0.05);border:1px dashed rgba(255,255,255,0.22);border-radius:7px;color:rgba(255,255,255,0.55);font-size:11.5px;font-weight:500;padding:6px 10px;cursor:pointer;font-family:inherit;transition:background 0.15s,color 0.15s}
+.udev-btn:hover{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85)}
+.udev-btn.active{background:rgba(255,255,255,0.16);color:#fff;border-style:solid}
+.udev-btn .badge{margin-left:auto}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,38,100,0.6);z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding:36px 20px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal{background:white;border-radius:14px;width:100%;max-width:720px;box-shadow:var(--shadow-lg);transform:translateY(-20px);transition:transform 0.2s}
@@ -461,8 +465,6 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
   <div class="nav-section">
     <div class="nav-label">Overview</div>
     <div class="nav-item active" onclick="showPage('board')" data-page="board"><span class="icon">📊</span>Board Summary</div>
-    <div class="nav-item" onclick="showPage('elt')" data-page="elt"><span class="icon">⚡</span>NRAR Tactical Agenda <span style="font-size:9px;opacity:0.45;font-style:italic">(Coming Soon)</span><span class="badge hidden" id="elt-badge">0</span></div>
-    <div class="nav-item" onclick="showPage('decisions')" data-page="decisions"><span class="icon">📋</span>Decision Register <span style="font-size:9px;opacity:0.45;font-style:italic">(Coming Soon)</span><span class="badge hidden" id="decisions-badge">0</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Registers</div>
@@ -473,7 +475,6 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
   <div class="nav-section">
     <div class="nav-label">Tools</div>
     <div class="nav-item" onclick="showPage('assessment')" data-page="assessment"><span class="icon">🎯</span>Risk Assessment Wizard</div>
-    <div class="nav-item" onclick="showPage('ci')" data-page="ci"><span class="icon">🔄</span>CI Actions <span style="font-size:9px;opacity:0.45;font-style:italic">(Coming Soon)</span></div>
     <div class="nav-item" onclick="showPage('heatmap')" data-page="heatmap"><span class="icon">🗺</span>Risk Heat Map</div>
   </div>
   <div class="nav-section">
@@ -481,20 +482,24 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
     <div class="nav-item" onclick="window.location.href='RMF_HUB.html'"><span class="icon">🎓</span>RMF Learning Hub</div>
   </div>
   <div class="nav-section">
-    <div class="nav-label">Change Management</div>
-    <div class="nav-item" onclick="showPage('changes')" data-page="changes"><span class="icon">⚙</span>Change Register<span class="badge hidden" id="changes-badge">0</span></div>
-    <div class="nav-item" onclick="showPage('bpog')" data-page="bpog"><span class="icon">📋</span>COG Agenda <span style="font-size:9px;opacity:0.45;font-style:italic">(Coming Soon)</span><span class="badge hidden" id="bpog-badge">0</span></div>
-  </div>
-  <div class="nav-section">
     <div class="nav-label">Settings</div>
     <div class="nav-item" onclick="showPage('framework')" data-page="framework"><span class="icon">📖</span>RMF Reference Guide</div>
     <div class="nav-item" onclick="showPage('changelog')" data-page="changelog"><span class="icon">📝</span>Change Log</div>
+  </div>
+  <div class="nav-section" id="under-dev-section">
+    <div class="nav-label">Under Development</div>
+    <div style="display:flex;flex-direction:column;gap:5px;padding:2px 10px 4px;">
+      <button class="udev-btn" onclick="showPage('elt')" data-page="elt">⚡ NRAR Tactical Agenda <span class="badge hidden" id="elt-badge">0</span></button>
+      <button class="udev-btn" onclick="showPage('decisions')" data-page="decisions">📋 Decision Register <span class="badge hidden" id="decisions-badge">0</span></button>
+      <button class="udev-btn" onclick="showPage('changes')" data-page="changes">⚙ Change Register <span class="badge hidden" id="changes-badge">0</span></button>
+      <button class="udev-btn" onclick="showPage('bpog')" data-page="bpog">📋 COG Agenda <span class="badge hidden" id="bpog-badge">0</span></button>
+    </div>
   </div>
 
   <div class="sidebar-bottom">
     <button class="sidebar-btn teal" onclick="exportJSON()">⬇ Export JSON Backup</button>
     <button class="sidebar-btn gold" onclick="document.getElementById('import-file').click()">⬆ Import / Restore</button>
-    <div class="version">v3.3 · localStorage · NRAR · RMF v0.1 aligned · June 2026</div>
+    <div class="version">v3.4 · localStorage · NRAR · RMF v0.1 aligned · Aug 2026</div>
   </div>
 </nav>
 
@@ -717,31 +722,11 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
         <label class="form-label">What should happen to the linked risk record?</label>
         <select class="form-control" id="d-risk-impact" onchange="toggleRiskImpactFields()">
           <option value="none">No change to risk record</option>
-          <option value="ci-update">Update CI action status / reset date</option>
-          <option value="ci-new">Add new CI action to risk</option>
           <option value="change">Initiate a Change record</option>
           <option value="rescore">Flag risk for rescore</option>
         </select>
       </div>
       <div id="d-impact-fields" style="display:none;">
-        <div id="d-ci-update-fields" style="display:none;">
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">New CI Status</label>
-              <select class="form-control" id="d-new-ci-status">
-                <option>In Progress</option><option>Planned</option><option>On Track</option><option>Completed</option>
-              </select>
-            </div>
-            <div class="form-group"><label class="form-label">Reset CI Due Date</label><input type="date" class="form-control" id="d-new-ci-date"></div>
-          </div>
-          <div class="form-group"><label class="form-label">CI Update Note</label><textarea class="form-control" id="d-ci-note" rows="2" placeholder="Note to add to the CI action (e.g. date reset per Executive direction dd/mm/yyyy)"></textarea></div>
-        </div>
-        <div id="d-ci-new-fields" style="display:none;">
-          <div class="form-group"><label class="form-label">New CI Action Text</label><textarea class="form-control" id="d-new-ci-action" rows="2" placeholder="New CI action directed by the Executive"></textarea></div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">CI Owner</label><input class="form-control" id="d-new-ci-owner"></div>
-            <div class="form-group"><label class="form-label">CI Due Date</label><input type="date" class="form-control" id="d-new-ci-due"></div>
-          </div>
-        </div>
         <div id="d-rescore-fields" style="display:none;">
           <div class="alert" style="background:var(--gold-pale);border:1px solid rgba(215,21,58,0.3);border-radius:7px;padding:10px 14px;font-size:12.5px;color:var(--dark);">
             <span>⚠</span><span style="margin-left:8px;">Risk will be flagged for rescore. The Risk Owner should update the residual score in the Enterprise Register after the risk record is reviewed.</span>
@@ -1043,19 +1028,12 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
       </div>
     </div>
 
-    <!-- CI Actions + Governance -->
+    <!-- Governance & Linked -->
     <div class="rd-body">
       <div class="rd-section">
-        <div class="rd-section-header"><span class="icon">🔄</span><h4>Continuous Improvement Action</h4></div>
+        <div class="rd-section-header"><span class="icon">🏛</span><h4>Governance &amp; Reporting</h4></div>
         <div class="rd-section-body">
-          <div class="rd-field"><div class="rd-field-val" id="rd-ci-action"></div></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
-            <div class="rd-field"><div class="rd-field-label">CI Owner</div><div class="rd-field-val" id="rd-ci-owner"></div></div>
-            <div class="rd-field"><div class="rd-field-label">Target Date</div><div class="rd-field-val" id="rd-ci-date"></div></div>
-            <div class="rd-field"><div class="rd-field-label">Status</div><div id="rd-ci-status"></div></div>
-            <div class="rd-field"><div class="rd-field-label">Board Reporting Frequency</div><div class="rd-field-val" id="rd-board-freq"></div></div>
-          </div>
-          <div class="rd-field" style="margin-top:10px;"><div class="rd-field-label">Outcome Measure</div><div class="rd-field-val" id="rd-ci-outcome"></div></div>
+          <div class="rd-field"><div class="rd-field-label">Board Reporting Frequency</div><div class="rd-field-val" id="rd-board-freq"></div></div>
         </div>
       </div>
 
@@ -1075,45 +1053,6 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
     </div>
 
   </div><!-- end rd-content -->
-</div>
-
-<!-- CI TRACKER -->
-<div class="page" id="page-ci">
-  <div class="page-header">
-    <div class="page-header-row">
-      <div><h1>CI & Change Management Tracker</h1><p>PDCA continuous improvement · Root cause analysis · Change prioritisation</p></div>
-      <button class="btn btn-primary" onclick="openModal('ci-modal')">+ Add CI Action</button>
-    </div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('ci-actions')">CI Actions</button>
-    <button class="tab-btn" onclick="showTab('ci-rca')">Root Cause Analysis</button>
-    <button class="tab-btn" onclick="showTab('ci-priority')">Prioritisation Matrix</button>
-  </div>
-  <div class="tab-pane active" id="tab-ci-actions">
-    <div class="filter-bar">
-      <div class="filter-chip active" onclick="setCIFilter(this,'ALL')">All</div>
-      <div class="filter-chip" onclick="setCIFilter(this,'Overdue')">⏰ Overdue</div>
-      <div class="filter-chip" onclick="setCIFilter(this,'In Progress')">🔵 In Progress</div>
-      <div class="filter-chip" onclick="setCIFilter(this,'Planned')">⬜ Planned</div>
-      <div class="filter-chip" onclick="setCIFilter(this,'Completed')">✅ Completed</div>
-    </div>
-    <div class="table-wrap">
-      <table class="risk-table">
-        <thead><tr><th>Risk ID</th><th>Register</th><th>CI Action</th><th>Owner</th><th>Due</th><th>Status</th><th>PDCA</th><th></th></tr></thead>
-        <tbody id="ci-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="tab-pane" id="tab-ci-rca">
-    <div class="alert alert-info mb-14"><span>ℹ</span><span>5 Whys root cause analysis for risk events and failed CI actions.</span></div>
-    <div id="rca-list"></div>
-    <button class="btn btn-secondary mt-14" onclick="newRCA()">+ New Root Cause Analysis</button>
-  </div>
-  <div class="tab-pane" id="tab-ci-priority">
-    <div class="alert alert-info mb-14"><span>ℹ</span><span>Prioritisation matrix — Impact vs Effort. Quick Wins (high impact, low effort) should be actioned first.</span></div>
-    <div id="priority-matrix"></div>
-  </div>
 </div>
 
 <!-- CHANGE MANAGEMENT -->
@@ -1644,22 +1583,14 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
         <div class="form-group"><label class="form-label">Risk Appetite</label><input class="form-control" id="r-appetite" placeholder="e.g. Zero tolerance"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Board Reporting Frequency</label><input class="form-control" id="r-board-freq" placeholder="e.g. Quarterly"></div>
+        <div class="form-group"><label class="form-label">Board Reporting Frequency</label>
+          <select class="form-control" id="r-board-freq"><option value="">— Select —</option><option>Monthly</option><option>Quarterly</option><option>Bi-annually</option><option>Annually</option><option>Every Board meeting</option></select></div>
         <div class="form-group"><label class="form-label">Escalation Trigger</label><textarea class="form-control" id="r-esc" rows="2"></textarea></div>
       </div>
-      <div class="divider"></div>
-      <div class="section-title">Continuous Improvement</div>
-      <div class="form-group"><label class="form-label">CI Action</label><textarea class="form-control" id="r-ci-action" rows="2"></textarea></div>
-      <div class="form-row-3">
-        <div class="form-group"><label class="form-label">CI Owner</label><input class="form-control" id="r-ci-owner"></div>
-        <div class="form-group"><label class="form-label">CI Target Date</label><input type="date" class="form-control" id="r-ci-date"></div>
-        <div class="form-group"><label class="form-label">CI Status</label>
-          <select class="form-control" id="r-ci-status"><option>Planned</option><option>In Progress</option><option>On Track</option><option>Completed</option><option>Overdue</option><option>Not Started</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">CI Outcome Measure</label><textarea class="form-control" id="r-ci-outcome" rows="2"></textarea></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Linked Registers</label><input class="form-control" id="r-linked"></div>
-        <div class="form-group"><label class="form-label">Next Review</label><input type="date" class="form-control" id="r-next-review"></div>
+        <div class="form-group"><label class="form-label">Next Review</label><input type="date" class="form-control" id="r-next-review">
+          <div class="form-hint">Leave blank to auto-set: +30 days for Critical/High residual, quarterly otherwise.</div></div>
       </div>
       <div id="esc-to-field" class="form-group hidden">
         <label class="form-label">Escalated to ERR? (Risk ID or "No")</label>
@@ -1684,42 +1615,16 @@ code{background:var(--off);border:1px solid var(--border);padding:1px 5px;border
       <div class="form-group"><label class="form-label">Owner</label><input class="form-control" id="nr-owner"></div>
       <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" id="nr-desc" rows="2"></textarea></div>
       <div class="form-group"><label class="form-label">Parent ERR Risk IDs</label><input class="form-control" id="nr-parent" placeholder="e.g. SR-10, SR-01"></div>
+      <div id="nr-danger-zone" class="hidden" style="margin-top:16px;border:1.5px solid #FECACA;background:#FFF5F5;border-radius:8px;padding:14px;">
+        <div style="font-weight:700;font-size:12.5px;color:#B91C1C;margin-bottom:6px;">⚠ Delete this register</div>
+        <div style="font-size:12px;color:var(--dark);line-height:1.5;margin-bottom:10px;">Permanently deletes the register and <strong>all risks in it</strong>. Only the register owner may delete it — type the owner's name exactly as recorded (<strong id="nr-del-owner-label"></strong>) to confirm.</div>
+        <input class="form-control" id="nr-del-confirm" placeholder="Type owner name to confirm" style="margin-bottom:8px;">
+        <button class="btn btn-danger btn-sm" onclick="deleteRegisterFromSettings()">🗑 Delete Register</button>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('new-reg-modal')">Cancel</button>
       <button class="btn btn-primary" id="nr-save-btn" onclick="saveNewRegister()">Create Register</button>
-    </div>
-  </div>
-</div>
-
-<!-- CI ACTION MODAL -->
-<div class="modal-overlay" id="ci-modal">
-  <div class="modal" style="max-width:580px;">
-    <div class="modal-header"><h2 id="ci-modal-title">Add CI Action</h2><button class="modal-close" onclick="closeModal('ci-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Risk ID *</label><input class="form-control" id="ci-risk-id"></div>
-        <div class="form-group"><label class="form-label">Register</label><select class="form-control" id="ci-reg-select"></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">CI Action *</label><textarea class="form-control" id="ci-action-txt" rows="3"></textarea></div>
-      <div class="form-row-3">
-        <div class="form-group"><label class="form-label">Owner</label><input class="form-control" id="ci-owner-in"></div>
-        <div class="form-group"><label class="form-label">Target Date</label><input type="date" class="form-control" id="ci-date-in"></div>
-        <div class="form-group"><label class="form-label">Status</label>
-          <select class="form-control" id="ci-status-in"><option>Planned</option><option>In Progress</option><option>On Track</option><option>Completed</option><option>Overdue</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Outcome Measure</label><textarea class="form-control" id="ci-outcome-in" rows="2"></textarea></div>
-      <div class="form-group"><label class="form-label">PDCA Phase</label>
-        <select class="form-control" id="ci-pdca-in">
-          <option>Plan — Define the action and expected outcome</option>
-          <option>Do — Implement the action</option>
-          <option>Check — Verify the outcome was achieved</option>
-          <option>Act — Embed or escalate based on results</option>
-        </select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('ci-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveCIAction()">Save Action</button>
     </div>
   </div>
 </div>
@@ -1908,7 +1813,6 @@ const CACHE_KEY = 'nrar_register_v4';
 
 let state = {
   registers: {},
-  ciActions: [],
   changelog: [],
   standingItems: [],
   changes: [],
@@ -1926,7 +1830,6 @@ function loadState() {
   try {
     const d = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
     if (d.registers)         state.registers         = d.registers;
-    if (d.ciActions)         state.ciActions         = d.ciActions;
     if (d.changelog)         state.changelog         = d.changelog;
     if (d.standingItems)     state.standingItems     = d.standingItems;
     if (d.changes)           state.changes           = d.changes;
@@ -2025,7 +1928,6 @@ function ctrlBadge(e) {
     return `<span class="badge" style="background:#ebebeb;color:#495054;border:1px solid #cdd3d6;">${e}</span>`;
   return `<span class="badge" style="background:#fff3cc;color:#7a5500;border:1px solid #faaf05;">${e}</span>`;
 }
-function ciBadge(s) { const m={Completed:'badge-completed','On Track':'badge-ontrack','In Progress':'badge-progress',Planned:'badge-planned',Overdue:'badge-overdue','Not Started':'badge-notstarted'}; return `<span class="badge ${m[s]||'badge-planned'}">${s||'—'}</span>`; }
 function overdue(d,s) { return d && new Date(d)<new Date() && s!=='Completed'; }
 function allRisks() { return Object.values(state.registers).flatMap(r => (r.risks||[]).map(x=>({...x,_reg:r.id,_regName:r.name}))); }
 function enterpriseRisks() { return Object.values(state.registers).filter(r=>r.isEnterprise).flatMap(r=>(r.risks||[]).map(x=>({...x,_reg:r.id,_regName:r.name}))); }
@@ -2266,7 +2168,7 @@ function getCategoryList(regId) {
   const r = state.registers[regId];
   if (!r) return RISK_CATEGORIES.enterprise;
   if (r.isEnterprise) return RISK_CATEGORIES.enterprise;
-  return RISK_CATEGORIES[regId] || [{ primary:'General', subs:['General'] }];
+  return RISK_CATEGORIES[regId] || RMF_CATS; // all registers inherit the full RMF category taxonomy
 }
 
 function populateCatDropdowns(prefix, regId, currentCat) {
@@ -2378,11 +2280,6 @@ function spToRisk(item) {
     appetite: item.Appetite || '',
     boardFreq: item.BoardFreq || '',
     escalation: item.Escalation || '',
-    ciAction: item.CIAction || '',
-    ciOwner: item.CIOwner || '',
-    ciDate: item.CIDate ? item.CIDate.split('T')[0] : '',
-    ciStatus: item.CIStatus || 'Planned',
-    ciOutcome: item.CIOutcome || '',
     linked: item.LinkedRegs || '',
     nextReview: item.NextReview ? item.NextReview.split('T')[0] : '',
     escalatedTo: item.EscalatedTo || '',
@@ -2411,11 +2308,6 @@ function riskToSP(r, registerId) {
     Appetite: (r.appetite||'').substring(0,255),
     BoardFreq: (r.boardFreq||'').substring(0,255),
     Escalation: r.escalation || '',
-    CIAction: r.ciAction || '',
-    CIOwner: (r.ciOwner||'').substring(0,255),
-    CIDate: r.ciDate || null,
-    CIStatus: (r.ciStatus||'Planned').substring(0,50),
-    CIOutcome: r.ciOutcome || '',
     LinkedRegs: (r.linked||'').substring(0,255),
     NextReview: r.nextReview || null,
     EscalatedTo: (r.escalatedTo||'').substring(0,255)
@@ -2573,7 +2465,7 @@ function renderBoardTable() {
   document.getElementById('board-table-body').innerHTML = risks.map(r=>{
     return `<tr>
       <td><span class="risk-id">${r.id}</span></td>
-      <td><strong style="font-size:12px;">${r.title}</strong></td>
+      <td><strong style="font-size:12px;">${r.title}</strong>${pendingDelBadge(r)}</td>
       <td class="text-muted text-small">${(r.category||'').split('|')[0].trim()}</td>
       <td>${ratBadge(rating(score(r.inhL,r.inhC), r.inhL, r.inhC))}</td>
       <td>${ctrlBadge(r.ctrlEff)}</td>
@@ -2797,7 +2689,8 @@ function renderEnterpriseTable() {
         <button class="btn btn-secondary btn-sm" onclick="rdJumpToFromTable('${r.id}','${errId}')">👁</button>
         <button class="btn btn-secondary btn-sm" onclick="openEditRisk('${r.id}','${errId}')">✏</button>
         <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 7px;" onclick="openDeEscalate('${r.id}','${errId}')" title="De-escalate to operational register">⬇ Move</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${errId}')">🗑</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleDeletionRequest('${r.id}','${errId}')" title="${r.pendingDeletion?'Withdraw deletion request':'Submit for deletion'}">🚩</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${errId}')" title="Delete risk">🗑</button>
       </div></td>
     </tr>`;
   }).join('') || `<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--muted);">No risks match filter.</td></tr>`;
@@ -2908,7 +2801,7 @@ function renderOpTable() {
       return `<tr>
         <td><span class="risk-id" style="font-size:11px;">${r.id}</span></td>
         <td><span style="font-size:10.5px;padding:2px 7px;border-radius:10px;background:var(--navy2);color:rgba(255,255,255,0.7);">${r.theme||'—'}</span></td>
-        <td><strong style="font-size:12px;">${r.title}</strong></td>
+        <td><strong style="font-size:12px;">${r.title}</strong>${pendingDelBadge(r)}</td>
         <td>${ratBadge(rating(primScore))}<span style="font-size:10px;color:var(--muted);margin-left:4px;">${primScore||'—'}</span></td>
         <td><span style="font-size:10.5px;font-weight:600;color:${r.issueStatus==='Current'?'var(--teal)':r.issueStatus==='Emerging'?'var(--gold)':'var(--muted)'};">${r.issueStatus||'—'}</span></td>
         <td class="text-small">${r.dataConfidence||'—'}</td>
@@ -2920,14 +2813,15 @@ function renderOpTable() {
         <td><div class="flex gap-4">
           <button class="btn btn-secondary btn-sm" onclick="rdJumpToFromTable('${r.id}','${currentRegister}')">👁</button>
           <button class="btn btn-secondary btn-sm" onclick="openEditRisk('${r.id}','${currentRegister}')">✏</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${currentRegister}')">🗑</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleDeletionRequest('${r.id}','${currentRegister}')" title="${r.pendingDeletion?'Withdraw deletion request':'Submit for deletion'}">🚩</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${currentRegister}')" title="Delete risk">🗑</button>
         </div></td>
       </tr>`;
     }).join('') || `<tr><td colspan="12" style="text-align:center;padding:24px;color:var(--muted);">No risks match filter.</td></tr>`;
   } else {
     document.getElementById('op-tbody').innerHTML = risks.map(r=>`<tr>
       <td><span class="risk-id">${r.id}</span></td>
-      <td><strong style="font-size:12px;">${r.title}</strong></td>
+      <td><strong style="font-size:12px;">${r.title}</strong>${pendingDelBadge(r)}</td>
       <td>${ratBadge(rating(score(r.inhL,r.inhC), r.inhL, r.inhC))}</td>
       <td>${ctrlBadge(r.ctrlEff)}</td>
       <td>${ratBadge(rating(score(r.resL,r.resC), r.resL, r.resC))}</td>
@@ -2940,7 +2834,8 @@ function renderOpTable() {
         <button class="btn btn-secondary btn-sm" onclick="rdJumpToFromTable('${r.id}','${currentRegister}')">👁</button>
         <button class="btn btn-secondary btn-sm" onclick="openEditRisk('${r.id}','${currentRegister}')">✏</button>
         <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 7px;" onclick="openEscalateToERR('${r.id}','${currentRegister}')" title="Escalate to Enterprise Risk Register">⬆ Escalate</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${currentRegister}')">🗑</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleDeletionRequest('${r.id}','${currentRegister}')" title="${r.pendingDeletion?'Withdraw deletion request':'Submit for deletion'}">🚩</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteRisk('${r.id}','${currentRegister}')" title="Delete risk">🗑</button>
       </div></td>
     </tr>`).join('') || `<tr><td colspan="${isDG ? 12 : 11}" style="text-align:center;padding:24px;color:var(--muted);">No risks yet. Click "+ Add Risk".</td></tr>`;
   }
@@ -3001,10 +2896,8 @@ function openEditRisk(riskId, regId) {
   if(document.getElementById('r-aiaf-system')){document.getElementById('r-aiaf-system').value=risk.aiafSystem||'';}
   if(document.getElementById('r-aiaf-link')){document.getElementById('r-aiaf-link').value=risk.aiafLink||'';}
   f('r-owner').value=risk.owner||''; f('r-appetite').value=risk.appetite||'';
-  f('r-board-freq').value=risk.boardFreq||''; f('r-esc').value=risk.escalation||'';
-  f('r-ci-action').value=risk.ciAction||''; f('r-ci-owner').value=risk.ciOwner||'';
-  f('r-ci-date').value=risk.ciDate||''; f('r-ci-status').value=risk.ciStatus||'Planned';
-  f('r-ci-outcome').value=risk.ciOutcome||''; f('r-linked').value=risk.linked||'';
+  setSelectWithLegacy('r-board-freq', risk.boardFreq||''); f('r-esc').value=risk.escalation||'';
+  f('r-linked').value=risk.linked||'';
   f('r-next-review').value=risk.nextReview||''; f('r-escalated').value=risk.escalatedTo||'';
   const errId = Object.keys(state.registers).find(k=>state.registers[k].isEnterprise)||'enterprise';
   f('esc-to-field').classList.toggle('hidden', regId===errId);
@@ -3014,11 +2907,10 @@ function openEditRisk(riskId, regId) {
 }
 
 function clearRiskForm() {
-  ['r-id','r-cat','r-title','r-desc','r-cause','r-cons','r-ctrl','r-ctrl-owner','r-owner','r-appetite','r-board-freq','r-esc','r-ci-action','r-ci-owner','r-ci-date','r-ci-outcome','r-linked','r-next-review','r-escalated'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['r-id','r-cat','r-title','r-desc','r-cause','r-cons','r-ctrl','r-ctrl-owner','r-owner','r-appetite','r-board-freq','r-esc','r-linked','r-next-review','r-escalated'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   ['r-il','r-ic','r-ctrl-eff','r-rl','r-rc','r-tgt-l','r-tgt-c','r-accept-basis','r-accept-by','r-accept-review'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   const accChk=document.getElementById('r-accepted'); if(accChk) accChk.checked=false;
   const appSt=document.getElementById('r-app-status'); if(appSt){appSt.textContent='—';appSt.style.background='var(--off)';appSt.style.color='var(--ink)';}
-  document.getElementById('r-ci-status').value='Planned';
   document.getElementById('m-inh-score').textContent='—';
   document.getElementById('m-inh-rat').innerHTML='';
   document.getElementById('m-res-score').textContent='—';
@@ -3030,6 +2922,27 @@ function calcModalScores() {
   const rl=document.getElementById('r-rl')?.value, rc=document.getElementById('r-rc')?.value;
   if(il&&ic){const s=score(il,ic);document.getElementById('m-inh-score').textContent=s;document.getElementById('m-inh-rat').innerHTML=ratBadge(rating(s));}
   if(rl&&rc){const s=score(rl,rc);document.getElementById('m-res-score').textContent=s;document.getElementById('m-res-rat').innerHTML=ratBadge(rating(s));}
+}
+
+function autoNextReview(resL, resC) {
+  // Critical/High residual → review in 30 days; otherwise quarterly.
+  const band = _rmfBand(resL, resC);
+  const d = new Date();
+  if (band === 'CRITICAL' || band === 'HIGH') d.setDate(d.getDate() + 30);
+  else d.setMonth(d.getMonth() + 3);
+  return d.toISOString().slice(0, 10);
+}
+
+function setSelectWithLegacy(id, val) {
+  // Set a <select>'s value; if the stored value predates the preset list, inject it so nothing is lost.
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (val && ![...el.options].some(o => o.value === val || o.text === val)) {
+    const o = document.createElement('option');
+    o.value = val; o.text = val + ' (legacy)';
+    el.appendChild(o);
+  }
+  el.value = val || '';
 }
 
 function saveRisk() {
@@ -3048,9 +2961,7 @@ function saveRisk() {
     aiafStatus:f('r-aiaf-status'), aiafDate:f('r-aiaf-date'), aiafRating:f('r-aiaf-rating'),
     aiafSystem:f('r-aiaf-system'), aiafLink:f('r-aiaf-link'),
     owner:f('r-owner'), appetite:f('r-appetite'), boardFreq:f('r-board-freq'), escalation:f('r-esc'),
-    ciAction:f('r-ci-action'), ciOwner:f('r-ci-owner'),
-    ciDate:f('r-ci-date'), ciStatus:f('r-ci-status'), ciOutcome:f('r-ci-outcome'),
-    linked:f('r-linked'), nextReview:f('r-next-review'), escalatedTo:f('r-escalated'),
+    linked:f('r-linked'), nextReview:f('r-next-review') || autoNextReview(parseInt(f('r-rl'))||0, parseInt(f('r-rc'))||0), escalatedTo:f('r-escalated'),
     lastModified: new Date().toISOString()
   };
 
@@ -3071,6 +2982,27 @@ function saveRisk() {
   saveState();
   renderAll();
   closeModal('risk-modal');
+}
+
+function toggleDeletionRequest(riskId, regId) {
+  const reg = state.registers[regId];
+  const risk = reg?.risks?.find(r=>r.id===riskId);
+  if (!risk) return;
+  if (risk.pendingDeletion) {
+    delete risk.pendingDeletion;
+    logChange('Deletion request withdrawn', `${riskId} in ${reg.name}`);
+    toast(`Deletion request for ${riskId} withdrawn`, 'success');
+  } else {
+    risk.pendingDeletion = new Date().toISOString().slice(0,10);
+    logChange('Submitted for deletion', `${riskId} in ${reg.name} — awaiting risk owner action`);
+    toast(`${riskId} submitted for deletion — risk owner to action`, 'success');
+  }
+  saveState(); renderAll();
+  if (typeof currentRegister !== 'undefined' && currentRegister === regId) renderOpTable();
+}
+
+function pendingDelBadge(r) {
+  return r.pendingDeletion ? ` <span class="badge badge-overdue" style="font-size:9px;" title="Submitted for deletion ${r.pendingDeletion}">🚩 Deletion requested</span>` : '';
 }
 
 function deleteRisk(riskId, regId) {
@@ -3099,6 +3031,7 @@ function openNewRegisterModal() {
   document.getElementById('nr-owner').value = '';
   document.getElementById('nr-desc').value = '';
   document.getElementById('nr-parent').value = '';
+  document.getElementById('nr-danger-zone').classList.add('hidden');
   openModal('new-reg-modal');
 }
 
@@ -3114,7 +3047,33 @@ function openEditRegisterSettings(regId) {
   document.getElementById('nr-owner').value = reg.owner || '';
   document.getElementById('nr-desc').value = reg.desc || '';
   document.getElementById('nr-parent').value = reg.parent || '';
+  const dz = document.getElementById('nr-danger-zone');
+  if (reg.isEnterprise) { dz.classList.add('hidden'); }
+  else {
+    dz.classList.remove('hidden');
+    document.getElementById('nr-del-confirm').value = '';
+    document.getElementById('nr-del-owner-label').textContent = (reg.owner||'').trim() || reg.code || reg.name;
+  }
   openModal('new-reg-modal');
+}
+
+function deleteRegisterFromSettings() {
+  const reg = state.registers[editingRegSettingsId];
+  if (!reg) { toast('Register not found', 'error'); return; }
+  if (reg.isEnterprise) { toast('The Enterprise Register cannot be deleted', 'error'); return; }
+  const expected = ((reg.owner||'').trim() || reg.code || reg.name).toLowerCase();
+  const typed = (document.getElementById('nr-del-confirm').value||'').trim().toLowerCase();
+  if (typed !== expected) { toast('Confirmation does not match the register owner — deletion is restricted to the risk owner', 'error'); return; }
+  if (!confirm(`Delete register "${reg.name}" and its ${(reg.risks||[]).length} risk(s)? This cannot be undone.`)) return;
+  const regName = reg.name;
+  delete state.registers[editingRegSettingsId];
+  logChange('Deleted register', `${regName} (owner-confirmed deletion)`);
+  if (typeof currentRegister !== 'undefined' && currentRegister === editingRegSettingsId) { currentRegister = null; hideOpReg(); }
+  editingRegSettingsId = null;
+  saveState(); renderAll(); renderRegCards();
+  closeModal('new-reg-modal');
+  showPage('operational');
+  toast(`Register "${regName}" deleted`, 'success');
 }
 
 function saveNewRegister() {
@@ -3231,21 +3190,11 @@ const wSteps = [
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Board/Governance Reporting Frequency</label>
-          <select class="form-control" id="w-board-freq"><option>Every Board meeting</option><option>Quarterly</option><option>Bi-annually</option><option>Annually</option></select></div>
+          <select class="form-control" id="w-board-freq"><option>Monthly</option><option>Quarterly</option><option>Bi-annually</option><option>Annually</option><option>Every Board meeting</option></select></div>
         <div class="form-group"><label class="form-label">Escalation Trigger</label><textarea class="form-control" id="w-esc" rows="2">${wData.escalation||''}</textarea></div>
       </div>
-      <div class="divider"></div>
-      <div class="section-title">Continuous Improvement Action (PDCA — Plan Phase)</div>
-      <div class="form-group"><label class="form-label">CI Action</label><textarea class="form-control" id="w-ci" rows="3" placeholder="Specific, time-bound action to reduce inherent risk or strengthen controls.">${wData.ciAction||''}</textarea></div>
-      <div class="form-row-3">
-        <div class="form-group"><label class="form-label">CI Owner</label><input class="form-control" id="w-ci-owner" value="${wData.ciOwner||''}"></div>
-        <div class="form-group"><label class="form-label">CI Target Date</label><input type="date" class="form-control" id="w-ci-date" value="${wData.ciDate||''}"></div>
-        <div class="form-group"><label class="form-label">CI Status</label>
-          <select class="form-control" id="w-ci-status"><option>Planned</option><option>In Progress</option><option>Not Started</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">CI Outcome Measure</label><textarea class="form-control" id="w-ci-outcome" rows="2" placeholder="How will we know it worked?">${wData.ciOutcome||''}</textarea></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Next Review</label><input type="date" class="form-control" id="w-next-review" value="${wData.nextReview||''}"></div>
+        <div class="form-group"><label class="form-label">Next Review</label><input type="date" class="form-control" id="w-next-review" value="${wData.nextReview||''}"><div class="form-hint">Leave blank to auto-set: +30 days for Critical/High residual, quarterly otherwise.</div></div>
         <div class="form-group"><label class="form-label">Linked Registers</label><input class="form-control" id="w-linked" value="${wData.linked||''}"></div>
       </div>
     </div></div>`},
@@ -3255,7 +3204,7 @@ const wSteps = [
     return `<div class="grid-2">
       <div class="card"><div class="card-header"><h3>Risk Summary</h3></div><div class="card-body">
         <table style="width:100%;font-size:12.5px;border-collapse:collapse;">
-          ${[['Risk ID',wData.id||'—'],['Register',regName],['Title',`<strong>${wData.title||'—'}</strong>`],['Inherent',`<span class="font-mono fw-bold">${is||'—'}</span> ${is?ratBadge(rating(is)):''}`],['Control Eff',ctrlBadge(wData.ctrlEff||'—')],['Residual',`<span class="font-mono fw-bold">${rs||'—'}</span> ${rs?ratBadge(rating(rs)):''}`],['Risk Owner',wData.owner||'—'],['CI Owner',wData.ciOwner||'—'],['CI Due',wData.ciDate||'—']].map(([k,v])=>`<tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:var(--muted);width:120px;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`).join('')}
+          ${[['Risk ID',wData.id||'—'],['Register',regName],['Title',`<strong>${wData.title||'—'}</strong>`],['Inherent',`<span class="font-mono fw-bold">${is||'—'}</span> ${is?ratBadge(rating(is)):''}`],['Control Eff',ctrlBadge(wData.ctrlEff||'—')],['Residual',`<span class="font-mono fw-bold">${rs||'—'}</span> ${rs?ratBadge(rating(rs)):''}`],['Risk Owner',wData.owner||'—']].map(([k,v])=>`<tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:var(--muted);width:120px;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`).join('')}
         </table>
       </div></div>
       <div>
@@ -3294,7 +3243,7 @@ function captureWStep(){
   const g=id=>document.getElementById(id)?.value||'';
   if(wStep===1){wData.id=g('w-id');wData.register=g('w-reg');wData.title=g('w-title');wData.desc=g('w-desc');wData.cause=g('w-cause');wData.cons=g('w-cons');}
   if(wStep===3){wData.controls=g('w-ctrl');wData.ctrlOwner=g('w-ctrl-owner');wData.ctrlEff=g('w-ctrl-eff');}
-  if(wStep===5){wData.owner=g('w-owner');wData.appetite=g('w-appetite');wData.boardFreq=g('w-board-freq');wData.escalation=g('w-esc');wData.ciAction=g('w-ci');wData.ciOwner=g('w-ci-owner');wData.ciDate=g('w-ci-date');wData.ciStatus=g('w-ci-status');wData.ciOutcome=g('w-ci-outcome');wData.nextReview=g('w-next-review');wData.linked=g('w-linked');}
+  if(wStep===5){wData.owner=g('w-owner');wData.appetite=g('w-appetite');wData.boardFreq=g('w-board-freq');wData.escalation=g('w-esc');wData.nextReview=g('w-next-review');wData.linked=g('w-linked');}
 }
 
 function renderWizard(){
@@ -3326,8 +3275,8 @@ function saveWizardRisk(){
     category:wData.category||'', title:wData.title, desc:wData.desc||'', cause:wData.cause||'', consequence:wData.cons||'',
     inhL:parseInt(wData.il)||0, inhC:parseInt(wData.ic)||0, controls:wData.controls||'', ctrlOwner:wData.ctrlOwner||'', ctrlEff:wData.ctrlEff||'Not Assessed',
     resL:parseInt(wData.rl)||0, resC:parseInt(wData.rc)||0, owner:wData.owner||'', appetite:wData.appetite||'', boardFreq:wData.boardFreq||'',
-    escalation:wData.escalation||'', ciAction:wData.ciAction||'', ciOwner:wData.ciOwner||'', ciDate:wData.ciDate||'', ciStatus:wData.ciStatus||'Planned',
-    ciOutcome:wData.ciOutcome||'', linked:wData.linked||'', nextReview:wData.nextReview||'', escalatedTo:''
+    escalation:wData.escalation||'',
+    linked:wData.linked||'', nextReview:wData.nextReview || autoNextReview(parseInt(wData.rl)||0, parseInt(wData.rc)||0), escalatedTo:''
   };
   if(!reg.risks)reg.risks=[];
   reg.risks.push(risk);
@@ -3340,82 +3289,6 @@ function saveWizardRisk(){
 // ════════════════════════════════════════════════════════════════════════
 // CI TRACKER
 // ════════════════════════════════════════════════════════════════════════
-let ciFilter='ALL';
-function setCIFilter(el,f){document.querySelectorAll('#tab-ci-actions .filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');ciFilter=f;renderCITable();}
-
-function buildAllCI() {
-  const items=[];
-  Object.values(state.registers).forEach(reg=>{
-    (reg.risks||[]).forEach(r=>{
-      if(r.ciAction) items.push({riskId:r.id,registerName:reg.name,action:r.ciAction,owner:r.ciOwner,date:r.ciDate,status:r.ciStatus||'Planned',outcome:r.ciOutcome,pdca:'Plan',_regId:reg.id,spId:r.spId});
-    });
-  });
-  state.ciActions.forEach(ci=>items.push(ci));
-  return items;
-}
-
-function renderCITable(){
-  const items=buildAllCI().filter(ci=>{
-    if(ciFilter==='ALL') return true;
-    if(ciFilter==='Overdue') return overdue(ci.date,ci.status);
-    return ci.status===ciFilter;
-  });
-  document.getElementById('ci-tbody').innerHTML=items.map(ci=>`<tr>
-    <td><span class="risk-id">${ci.riskId||'—'}</span></td>
-    <td class="text-muted text-small">${ci.registerName||'—'}</td>
-    <td style="max-width:220px;"><span class="text-small">${(ci.action||'').substring(0,100)}${(ci.action||'').length>100?'…':''}</span></td>
-    <td class="text-small">${ci.owner||'—'}</td>
-    <td class="text-small font-mono">${ci.date||'—'}${overdue(ci.date,ci.status)?'<span class="badge badge-overdue" style="margin-left:4px;font-size:9px;">⏰</span>':''}</td>
-    <td>${ciBadge(ci.status)}</td>
-    <td><span class="tag" style="font-size:9.5px;">${(ci.pdca||'Plan').split(' ')[0]}</span></td>
-    <td>${ci._regId?`<button class="btn btn-secondary btn-sm" onclick="openEditRisk('${ci.riskId}','${ci._regId}')">✏</button>`:''}</td>
-  </tr>`).join('')||`<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No CI actions match filter.</td></tr>`;
-}
-
-function saveCIAction(){
-  const g=id=>document.getElementById(id)?.value||'';
-  const action={riskId:g('ci-risk-id'),registerName:state.registers[g('ci-reg-select')]?.name||'',action:g('ci-action-txt'),owner:g('ci-owner-in'),date:g('ci-date-in'),status:g('ci-status-in'),outcome:g('ci-outcome-in'),pdca:g('ci-pdca-in'),id:Date.now()};
-  if(!action.action){toast('CI Action text required','error');return;}
-  state.ciActions.push(action);
-  logChange('Added CI action',action.action.substring(0,80));
-  saveState(); renderCITable(); closeModal('ci-modal');
-  toast('CI action saved','success');
-}
-
-// RCA
-let rcaItems=[];
-function newRCA(){const e=prompt('Describe the event or problem:');if(!e)return;rcaItems.push({id:Date.now(),event:e,whys:[],created:new Date().toLocaleDateString('en-AU')});renderRCA();}
-function addWhy(id){const w=prompt('Why did this happen?');if(!w)return;const r=rcaItems.find(x=>x.id===id);if(r){r.whys.push(w);renderRCA();}}
-function renderRCA(){
-  const el=document.getElementById('rca-list'); if(!el)return;
-  el.innerHTML=rcaItems.map(r=>`
-    <div class="card mb-14"><div class="card-header"><h3>📋 ${r.event}</h3><span class="text-muted text-small">${r.created}</span></div><div class="card-body">
-      <div class="section-title">5 Whys</div>
-      ${r.whys.map((w,i)=>`<div style="margin-bottom:7px;"><strong style="color:var(--teal);">Why ${i+1}:</strong> ${w}</div>`).join('')}
-      <div class="flex gap-8 mt-12">
-        <button class="btn btn-secondary btn-sm" onclick="addWhy(${r.id})">+ Add Why</button>
-        <button class="btn btn-danger btn-sm" onclick="rcaItems=rcaItems.filter(x=>x.id!==${r.id});renderRCA()">🗑 Delete</button>
-      </div>
-    </div></div>`).join('')||'';
-}
-
-// Priority Matrix
-function renderPriorityMatrix(){
-  const risks=allRisks().filter(r=>r.ciStatus!=='Completed');
-  const quadrants=[
-    {label:'🏆 Quick Wins',sub:'High impact, low effort — action first',col:'var(--low-lt)',border:'var(--low)',risks:risks.filter(r=>score(r.resL,r.resC)>=10).slice(0,5)},
-    {label:'📦 Major Projects',sub:'High impact, high effort — plan carefully',col:'var(--teal-pale)',border:'var(--teal)',risks:risks.filter(r=>score(r.inhL,r.inhC)>=17).slice(0,5)},
-    {label:'📌 Fill-Ins',sub:'Low impact, low effort — do when capacity allows',col:'var(--off)',border:'var(--border)',risks:risks.filter(r=>score(r.resL,r.resC)<5).slice(0,4)},
-    {label:'🚫 Hard Slogs',sub:'Low impact, high effort — deprioritise',col:'#FFF5F5',border:'#FECACA',risks:[]},
-  ];
-  document.getElementById('priority-matrix').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;">${quadrants.map(q=>`
-    <div style="background:${q.col};border:1.5px solid ${q.border};border-radius:10px;padding:16px;">
-      <div style="font-weight:700;font-size:13px;margin-bottom:3px;">${q.label}</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">${q.sub}</div>
-      ${q.risks.map(r=>`<div class="flex items-center gap-8" style="margin-bottom:5px;"><span class="risk-id">${r.id}</span><span style="font-size:11px;">${r.title.substring(0,40)}${r.title.length>40?'…':''}</span></div>`).join('')||'<span class="text-muted" style="font-size:11.5px;">No items</span>'}
-    </div>`).join('')}</div>`;
-}
-
 // ════════════════════════════════════════════════════════════════════════
 // CHANGE MANAGEMENT
 // ════════════════════════════════════════════════════════════════════════
@@ -3845,7 +3718,6 @@ function importJSON(e){
       // Full state import
       if(d.registers){
         if(d.registers) state.registers = d.registers;
-        if(d.ciActions) state.ciActions = d.ciActions;
         if(d.changelog) state.changelog = d.changelog || [];
         if(d.standingItems) state.standingItems = d.standingItems || [];
       }
@@ -3880,15 +3752,6 @@ function importJSON(e){
     e.target.value=''; // reset so same file can be re-imported
   };
   reader.readAsText(file,'UTF-8');
-}
-
-// ════════════════════════════════════════════════════════════════════════
-// CI MODAL SETUP
-// ════════════════════════════════════════════════════════════════════════
-function openCIModal(){
-  const sel=document.getElementById('ci-reg-select');
-  if(sel) sel.innerHTML=Object.values(state.registers).map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
-  openModal('ci-modal');
 }
 
 // ════════════════════════════════════════════════════════════════════════
@@ -4255,18 +4118,8 @@ function renderRiskDetail(val) {
   document.getElementById('rd-ctrl-eff').innerHTML = ctrlBadge(risk.ctrlEff);
   document.getElementById('rd-effectiveness-bar').innerHTML = rdEffBar(risk.ctrlEff);
 
-  // ── CI ──
-  document.getElementById('rd-ci-action').innerHTML = risk.ciAction
-    ? `<div style="font-size:13px;line-height:1.7;color:var(--dark);">${risk.ciAction}</div>`
-    : '<div class="empty">No CI action recorded.</div>';
-  document.getElementById('rd-ci-owner').innerHTML = fv(risk.ciOwner);
-  const od = overdue(risk.ciDate, risk.ciStatus);
-  document.getElementById('rd-ci-date').innerHTML = risk.ciDate
-    ? `<span style="font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;">${risk.ciDate}</span>${od ? ' <span class="badge badge-overdue" style="font-size:10px;">⏰ Overdue</span>' : ''}`
-    : '<span class="empty">Not set</span>';
-  document.getElementById('rd-ci-status').innerHTML = ciBadge(risk.ciStatus);
+  // ── Governance & Reporting ──
   document.getElementById('rd-board-freq').innerHTML = fv(risk.boardFreq);
-  document.getElementById('rd-ci-outcome').innerHTML = fv(risk.ciOutcome, 'No outcome measure recorded.');
 
   // ── LINKED RISKS ──
   const linkedRiskEl = document.getElementById('rd-linked-risks');
@@ -4351,7 +4204,7 @@ function decActionStatusBadge(s) {
 function decRiskImpactBadge(impact) {
   if (!impact || impact === 'none') return '<span style="color:var(--muted);font-size:11px;">None</span>';
   const labels = {
-    'ci-update':'CI Updated','ci-new':'New CI Added',
+    'ci-update':'Risk record updated (legacy)','ci-new':'Action added (legacy)',
     'change':'Change Initiated','rescore':'Rescore Flagged'
   };
   return `<span class="badge badge-progress" style="font-size:10px;">${labels[impact]||impact}</span>`;
@@ -4440,7 +4293,7 @@ function buildOutcomeItems() {
   // Get risks currently on the Executive agenda (same logic as renderExecutiveAgenda)
   const risks = allRisks().filter(r => {
     const rr = rating(score(r.resL,r.resC), r.resL, r.resC);
-    const od = overdue(r.ciDate, r.ciStatus);
+    const od = overdue(r.nextReview, '');
     return agendaFilters.has(rr) || (agendaFilters.has('overdue') && od);
   });
   const order = {CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3};
@@ -4505,30 +4358,12 @@ function buildOutcomeItems() {
             <label class="form-label">Risk Record Impact</label>
             <select class="form-control" id="oi-impact-${i}" onchange="toggleOIImpact(${i}, this.value)">
               <option value="none">No change to risk record</option>
-              <option value="ci-update">Update CI action status / reset date</option>
-              <option value="ci-new">Add new CI action</option>
               <option value="change">Initiate a Change record</option>
               <option value="rescore">Flag for rescore</option>
             </select>
           </div>
         </div>
         <div id="oi-impact-detail-${i}" style="display:none;margin-top:8px;">
-          <div id="oi-ci-update-${i}" style="display:none;">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-              <div class="form-group"><label class="form-label">New CI Status</label>
-                <select class="form-control" id="oi-new-ci-status-${i}"><option>In Progress</option><option>Planned</option><option>On Track</option><option>Completed</option></select>
-              </div>
-              <div class="form-group"><label class="form-label">Reset CI Due Date</label><input type="date" class="form-control" id="oi-new-ci-date-${i}"></div>
-              <div class="form-group"><label class="form-label">CI Note</label><input class="form-control" id="oi-ci-note-${i}" placeholder="e.g. Reset per Executive direction"></div>
-            </div>
-          </div>
-          <div id="oi-ci-new-${i}" style="display:none;">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-              <div class="form-group"><label class="form-label">New CI Action</label><input class="form-control" id="oi-new-ci-action-${i}" placeholder="New CI action text"></div>
-              <div class="form-group"><label class="form-label">CI Owner</label><input class="form-control" id="oi-new-ci-owner-${i}"></div>
-              <div class="form-group"><label class="form-label">CI Due</label><input type="date" class="form-control" id="oi-new-ci-due-${i}"></div>
-            </div>
-          </div>
           <div id="oi-rescore-${i}" style="display:none;">
             <div class="alert" style="background:var(--gold-pale);border:1px solid rgba(215,21,58,0.3);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--dark);">
               ⚠ Risk will be flagged for rescore. Update the residual score in the register after review.
@@ -4558,7 +4393,7 @@ function toggleOIImpact(i, val) {
   const detail = document.getElementById(`oi-impact-detail-${i}`);
   if (!detail) return;
   detail.style.display = val !== 'none' ? 'block' : 'none';
-  ['ci-update','ci-new','rescore','change'].forEach(type => {
+  ['rescore','change'].forEach(type => {
     const el = document.getElementById(`oi-${type}-${i}`);
     if (el) el.style.display = val === type ? 'block' : 'none';
   });
@@ -4680,30 +4515,7 @@ function applyRiskImpact(rec, i, regId, impact) {
   if (riskIdx < 0) return;
   const risk = reg.risks[riskIdx];
 
-  if (impact === 'ci-update') {
-    const newStatus = document.getElementById(`oi-new-ci-status-${i}`)?.value;
-    const newDate = document.getElementById(`oi-new-ci-date-${i}`)?.value;
-    const note = document.getElementById(`oi-ci-note-${i}`)?.value;
-    if (newStatus) risk.ciStatus = newStatus;
-    if (newDate) risk.ciDate = newDate;
-    if (note) risk.ciAction = (risk.ciAction || '') + `\n[${rec.meetingDate} Executive direction: ${note}]`;
-    logChange('CI updated via Executive decision', `${rec.riskId} — ${newStatus} · ${rec.id}`);
-  }
-  else if (impact === 'ci-new') {
-    const newAction = document.getElementById(`oi-new-ci-action-${i}`)?.value;
-    const newOwner = document.getElementById(`oi-new-ci-owner-${i}`)?.value;
-    const newDue = document.getElementById(`oi-new-ci-due-${i}`)?.value;
-    if (newAction) {
-      state.ciActions.push({
-        riskId: rec.riskId, registerName: reg.name,
-        action: newAction, owner: newOwner, date: newDue,
-        status: 'Planned', outcome: '', pdca: 'Plan',
-        id: Date.now(), sourceDecision: rec.id
-      });
-      logChange('New CI action from Executive decision', `${rec.riskId} — ${rec.id}`);
-    }
-  }
-  else if (impact === 'rescore') {
+  if (impact === 'rescore') {
     risk.rescoreFlag = true;
     risk.rescoreFlagDate = rec.meetingDate;
     logChange('Risk flagged for rescore', `${rec.riskId} — ${rec.id}`);
@@ -4761,8 +4573,6 @@ function toggleRiskImpactFields() {
   const wrap = document.getElementById('d-impact-fields');
   if (!wrap) return;
   wrap.style.display = val !== 'none' ? 'block' : 'none';
-  document.getElementById('d-ci-update-fields').style.display = val === 'ci-update' ? 'block' : 'none';
-  document.getElementById('d-ci-new-fields').style.display = val === 'ci-new' ? 'block' : 'none';
   document.getElementById('d-rescore-fields').style.display = val === 'rescore' ? 'block' : 'none';
   document.getElementById('d-change-fields').style.display = val === 'change' ? 'block' : 'none';
 }
@@ -4848,7 +4658,6 @@ function showPage(id){
   document.querySelector(`[data-page="${id}"]`)?.classList.add('active');
   if(id==='assessment') renderWizard();
   if(id==='heatmap') renderHeatmap();
-  if(id==='ci'){renderCITable();renderRCA();renderPriorityMatrix();}
   if(id==='board'){renderBoardTiles();renderBoardTable();renderBoardStats();}
   if(id==='elt'){renderExecutiveAgenda();renderStandingItems();}
   if(id==='operational'){renderRegCards();hideOpReg();}
@@ -4881,18 +4690,24 @@ function showTab(id){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`tab-${id}`)?.classList.add('active');
   document.querySelector(`[onclick="showTab('${id}')"]`)?.classList.add('active');
-  if(id==='ci-priority') renderPriorityMatrix();
-  if(id==='ci-rca') renderRCA();
 }
 
 function openModal(id){document.getElementById(id)?.classList.add('open');}
 function closeModal(id){document.getElementById(id)?.classList.remove('open');}
 
+const GUARDED_MODALS = ['risk-modal']; // modals holding unsaved drafts — never dismiss silently
+function confirmDismissModal(m){
+  if(GUARDED_MODALS.includes(m.id)){
+    if(confirm('Keep or discard this draft?\n\nOK — discard the draft (your changes will NOT be saved)\nCancel — keep editing')) m.classList.remove('open');
+    return;
+  }
+  m.classList.remove('open');
+}
 document.querySelectorAll('.modal-overlay').forEach(o=>{
-  o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('open');});
+  o.addEventListener('click',e=>{if(e.target===o) confirmDismissModal(o);});
 });
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>confirmDismissModal(m));
 });
 
 // ════════════════════════════════════════════════════════════════════════
@@ -4901,7 +4716,7 @@ document.addEventListener('keydown',e=>{
 function renderAll(){
   renderBoardTiles(); renderBoardTable(); renderBoardStats();
   renderEnterpriseTable(); renderRegCards(); renderExecutiveAgenda();
-  renderCITable(); renderChangelog(); renderStandingItems(); renderHeatmap();
+  renderChangelog(); renderStandingItems(); renderHeatmap();
   renderChangeTable(); renderCOGAgenda(); renderCOGStanding(); renderDecisionList();
   document.getElementById('board-date').textContent=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
   const d=new Date(); d.setDate(d.getDate()+(1+7-d.getDay())%7||7);
