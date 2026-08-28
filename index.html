@@ -182,42 +182,33 @@ body{font-family:'Public Sans',sans-serif;font-weight:300;background:var(--off);
 /* STAT TILES */
 /* ── RISK PROFILE TILES ── */
 .risk-profile-wrap{background:var(--navy);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow);}
+.rp-stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;}
+.rp-stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:9px 8px;text-align:center;cursor:default;}
+.rp-stat-num{font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;font-size:22px;font-weight:600;color:#fff;line-height:1.1;}
+.rp-stat-label{font-size:10.5px;color:rgba(255,255,255,0.75);margin-top:3px;line-height:1.3;}
+.rp-stat.good{border-color:rgba(140,224,229,0.6);} .rp-stat.good .rp-stat-num{color:#8cdbe5;}
+.rp-stat.warn{border-color:rgba(255,139,61,0.7);} .rp-stat.warn .rp-stat-num{color:#ffb07a;}
 .risk-profile-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px;}
-.risk-profile-row+.risk-profile-row{margin-top:12px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);}
-.rp-row-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;}
-.rp-tile{border-radius:10px;padding:16px 18px 14px;position:relative;overflow:hidden;cursor:default;transition:transform 0.15s,box-shadow 0.15s;}
+.risk-profile-row+.risk-profile-row{margin-top:12px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.12);}
+.rp-row-label{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;margin-bottom:10px;border-left:3px solid var(--blue03);padding-left:9px;}
+.rp-tile{background:rgba(255,255,255,0.10);border-radius:9px;padding:13px 12px 12px;text-align:center;cursor:default;transition:transform 0.15s,box-shadow 0.15s;}
 .rp-tile:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.25);}
-.rp-tile::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:0.12;transform:translate(20px,-20px);}
-.rp-tile-critical{background:linear-gradient(135deg,#5a0016 0%,#7a001f 100%);border:1px solid rgba(215,21,58,0.5);}
-.rp-tile-critical::before{background:#d7153a;}
-.rp-tile-high{background:linear-gradient(135deg,#3d1800 0%,#552000 100%);border:1px solid rgba(232,97,10,0.5);}
-.rp-tile-high::before{background:#e8610a;}
-.rp-tile-medium{background:linear-gradient(135deg,#3d2f00 0%,#4f3d00 100%);border:1px solid rgba(250,175,5,0.4);}
-.rp-tile-medium::before{background:#faaf05;}
-.rp-tile-low{background:linear-gradient(135deg,#051f23 0%,#0a3038 100%);border:1px solid rgba(11,63,71,0.6);}
-.rp-tile-low::before{background:#0b3f47;}
-.rp-tile-num{font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;font-size:48px;font-weight:700;line-height:1;margin-bottom:6px;letter-spacing:-2px;}
-.rp-tile-critical .rp-tile-num{color:#ff8fa3;}
-.rp-tile-high .rp-tile-num{color:#ffb07a;}
-.rp-tile-medium .rp-tile-num{color:#faaf05;}
-.rp-tile-low .rp-tile-num{color:#8cdbe5;}
-.rp-tile-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
-.rp-tile-critical .rp-tile-label{color:rgba(255,143,163,0.7);}
-.rp-tile-high .rp-tile-label{color:rgba(255,176,122,0.7);}
-.rp-tile-medium .rp-tile-label{color:rgba(250,175,5,0.7);}
-.rp-tile-low .rp-tile-label{color:rgba(140,219,229,0.7);}
-.rp-tile-bar{height:3px;border-radius:2px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:8px;}
-.rp-tile-bar-fill{height:100%;border-radius:2px;transition:width 0.6s ease;}
-.rp-tile-critical .rp-tile-bar-fill{background:#d7153a;}
-.rp-tile-high .rp-tile-bar-fill{background:#e8610a;}
-.rp-tile-medium .rp-tile-bar-fill{background:#faaf05;}
-.rp-tile-low .rp-tile-bar-fill{background:#2e808e;}
-.rp-tile-meta{font-size:10px;color:rgba(255,255,255,0.3);display:flex;justify-content:space-between;align-items:center;}
+.rp-tile-critical{border:1.5px solid #ff5c7c;} .rp-tile-high{border:1.5px solid #ff8b3d;}
+.rp-tile-medium{border:1.5px solid #faaf05;} .rp-tile-low{border:1.5px solid #37c2d4;}
+.rp-tile-num{font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;font-size:38px;font-weight:700;line-height:1;letter-spacing:-1px;margin-bottom:5px;}
+.rp-tile-critical .rp-tile-num{color:#ff8fa3;} .rp-tile-high .rp-tile-num{color:#ffb07a;}
+.rp-tile-medium .rp-tile-num{color:#ffcf4d;} .rp-tile-low .rp-tile-num{color:#8cdbe5;}
+.rp-tile-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.rp-tile-critical .rp-tile-label{color:#ffc2cd;} .rp-tile-high .rp-tile-label{color:#ffd3b3;}
+.rp-tile-medium .rp-tile-label{color:#ffe4a1;} .rp-tile-low .rp-tile-label{color:#c4ecf2;}
+.rp-tile-meta{display:flex;align-items:center;gap:6px;}
+.rp-tile-bar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,0.18);overflow:hidden;}
+.rp-tile-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.rp-tile-critical .rp-tile-bar-fill{background:#ff5c7c;} .rp-tile-high .rp-tile-bar-fill{background:#ff8b3d;}
+.rp-tile-medium .rp-tile-bar-fill{background:#faaf05;} .rp-tile-low .rp-tile-bar-fill{background:#37c2d4;}
 .rp-tile-pct{font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;font-size:11px;font-weight:600;}
-.rp-tile-critical .rp-tile-pct{color:rgba(255,143,163,0.8);}
-.rp-tile-high .rp-tile-pct{color:rgba(255,176,122,0.8);}
-.rp-tile-medium .rp-tile-pct{color:rgba(250,175,5,0.8);}
-.rp-tile-low .rp-tile-pct{color:rgba(140,219,229,0.8);}
+.rp-tile-critical .rp-tile-pct{color:#ffc2cd;} .rp-tile-high .rp-tile-pct{color:#ffd3b3;}
+.rp-tile-medium .rp-tile-pct{color:#ffe4a1;} .rp-tile-low .rp-tile-pct{color:#c4ecf2;}
 /* legacy stat-tile kept for RMF guide */
 .stat-tile{border-radius:var(--radius);padding:16px 18px;display:flex;flex-direction:column;gap:5px;border:1px solid transparent}
 .stat-tile .val{font-size:34px;font-weight:700;font-family:ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;line-height:1}
@@ -2331,27 +2322,64 @@ function spToRegister(item) {
 // ════════════════════════════════════════════════════════════════════════
 // BOARD SUMMARY
 // ════════════════════════════════════════════════════════════════════════
+function appetiteBand(r) {
+  // Mirrors appetiteStatusCell classification so strip counts match the table column.
+  if (!r) return 'unknown';
+  const resL = parseInt(r.resL)||0, resC = parseInt(r.resC)||0;
+  if (!resL || !resC) return 'unknown';
+  if (r.accepted) return 'accepted';
+  const rR = _rmfBand(resL, resC);
+  const tL = parseInt(r.tgtL)||0, tC = parseInt(r.tgtC)||0;
+  const tR = (tL && tC) ? _rmfBand(tL, tC) : '';
+  if (!tR) return 'no-target';
+  const ctrl = (r.ctrlEff||'').toLowerCase();
+  const ctrlOk = (ctrl === 'effective' || ctrl === 'substantially effective');
+  const withinTol = (rR === 'LOW' || rR === 'MEDIUM');
+  const atTarget = rR === tR;
+  if (atTarget && ctrlOk) return withinTol ? 'within' : 'floor';
+  if (atTarget && !ctrlOk) return 'weak';
+  if (withinTol) return 'above-target';
+  return 'above-tolerance';
+}
+
 function renderBoardTiles() {
   const risks = enterpriseRisks();
   const total = risks.length || 1;
   const inh={CRITICAL:0,HIGH:0,MEDIUM:0,LOW:0};
   const res={CRITICAL:0,HIGH:0,MEDIUM:0,LOW:0};
+  let improved=0, atTarget=0, aboveApp=0, withinApp=0;
   risks.forEach(r=>{
     const ir=rating(score(r.inhL,r.inhC), r.inhL, r.inhC), rr=rating(score(r.resL,r.resC), r.resL, r.resC);
     if(inh[ir]!==undefined) inh[ir]++;
     if(res[rr]!==undefined) res[rr]++;
+    const is_=score(r.inhL,r.inhC), rs_=score(r.resL,r.resC);
+    if(is_&&rs_&&rs_<is_) improved++;
+    const tL=parseInt(r.tgtL)||0, tC=parseInt(r.tgtC)||0;
+    if(tL&&tC&&rs_&&rs_<=score(tL,tC)) atTarget++;
+    const band=appetiteBand(r);
+    if(band==='above-tolerance') aboveApp++;
+    if(band==='within'||band==='floor'||band==='accepted') withinApp++;
   });
+  const n = risks.length;
+  const withinPct = n ? Math.round(withinApp/n*100) : 0;
+
+  const statStrip = `
+    <div class="rp-stat-row">
+      <div class="rp-stat" title="All risks in the Enterprise Risk Register"><div class="rp-stat-num">${n}</div><div class="rp-stat-label">Total risks</div></div>
+      <div class="rp-stat good" title="Residual score below inherent — controls are reducing exposure"><div class="rp-stat-num">${improved}</div><div class="rp-stat-label">Improved by controls</div></div>
+      <div class="rp-stat good" title="Residual at or below the set target score (risks with a target)"><div class="rp-stat-num">${atTarget}</div><div class="rp-stat-label">At or below target</div></div>
+      <div class="rp-stat warn" title="Above tolerance per the appetite operating rule — escalate, treat or formally accept"><div class="rp-stat-num">${aboveApp}</div><div class="rp-stat-label">Above appetite</div></div>
+      <div class="rp-stat" title="Within appetite, at irreducible floor, or informedly accepted"><div class="rp-stat-num">${withinPct}%</div><div class="rp-stat-label">Within appetite</div></div>
+    </div>`;
 
   const RATINGS = ['CRITICAL','HIGH','MEDIUM','LOW'];
-  const SCORE_RANGES = {CRITICAL:'17–25',HIGH:'10–16',MEDIUM:'5–9',LOW:'1–4'};
 
   const makeTile = (k, count, pct) => `
     <div class="rp-tile rp-tile-${k.toLowerCase()}">
       <div class="rp-tile-num">${count}</div>
       <div class="rp-tile-label">${k}</div>
-      <div class="rp-tile-bar"><div class="rp-tile-bar-fill" style="width:${pct}%;"></div></div>
       <div class="rp-tile-meta">
-        <span>${SCORE_RANGES[k]}</span>
+        <div class="rp-tile-bar"><div class="rp-tile-bar-fill" style="width:${pct}%;"></div></div>
         <span class="rp-tile-pct">${pct}%</span>
       </div>
     </div>`;
@@ -2366,6 +2394,7 @@ function renderBoardTiles() {
 
   document.getElementById('board-risk-profile').innerHTML = `
     <div class="risk-profile-wrap">
+      ${statStrip}
       ${makeRow(inh, 'Inherent Risk Profile')}
       ${makeRow(res, 'Residual Risk Profile')}
     </div>`;
