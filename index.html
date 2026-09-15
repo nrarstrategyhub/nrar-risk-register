@@ -221,6 +221,7 @@ body{font-family:'Public Sans',sans-serif;font-weight:300;background:var(--off);
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:0.2px;white-space:nowrap}
+.badge-unscored{background:#fdf1e8;color:#a34407;border:1px dashed #e8610a;}
 .badge-critical{background:var(--critical-lt);color:var(--critical)}
 .badge-high{background:var(--high-lt);color:var(--high)}
 .badge-medium{background:var(--medium-lt);color:var(--medium)}
@@ -1893,7 +1894,7 @@ function rating(s, l, c) {
   if (s>0)  return 'LOW';
   return '\u2014';
 }
-function ratBadge(r) { const m={CRITICAL:'badge-critical',HIGH:'badge-high',MEDIUM:'badge-medium',LOW:'badge-low','—':''}; return `<span class="badge ${m[r]||''}">${r}</span>`; }
+function ratBadge(r) { const m={CRITICAL:'badge-critical',HIGH:'badge-high',MEDIUM:'badge-medium',LOW:'badge-low','—':'badge-unscored'}; const t = r==='—' ? ' title="Scoring incomplete — add likelihood × consequence"' : ''; return `<span class="badge ${m[r]||''}"${t}>${r==='—' ? '⚠ Unscored' : r}</span>`; }
 
 // RMF descriptor labels
 const LIKELIHOOD_LABELS = {1:'Rare',2:'Unlikely',3:'Possible',4:'Likely',5:'Almost Certain'};
@@ -2487,7 +2488,7 @@ function appetiteStatusCell(r) {
 
 function renderBoardTable() {
   const { col, dir } = sortState.board;
-  let risks = enterpriseRisks().filter(r => ratFilters.board.has(rating(score(r.resL,r.resC), r.resL, r.resC)));
+  let risks = enterpriseRisks().filter(r => { const rr = rating(score(r.resL,r.resC), r.resL, r.resC); return ratFilters.board.has(rr) || rr === '—'; });
   risks = sortRisks(risks, col, dir);
   const bi = document.getElementById('board-sort-inh'); if(bi) bi.innerHTML = sortArrow('board','inh');
   const br = document.getElementById('board-sort-res'); if(br) br.innerHTML = sortArrow('board','res');
@@ -2692,7 +2693,8 @@ function renderEnterpriseTable() {
   const { col, dir } = sortState.enterprise;
   let risks = (state.registers[errId]?.risks||[]).filter(r=>{
     const rr=rating(score(r.resL,r.resC), r.resL, r.resC);
-    return ratFilters.enterprise.has(rr) && (!search||r.id.toLowerCase().includes(search)||r.title.toLowerCase().includes(search)||(r.ctrlOwner||'').toLowerCase().includes(search));
+    // Unscored risks (missing inherent and/or residual L×C) always stay visible so incomplete entries are never lost
+    return (ratFilters.enterprise.has(rr) || rr === '—') && (!search||r.id.toLowerCase().includes(search)||r.title.toLowerCase().includes(search)||(r.ctrlOwner||'').toLowerCase().includes(search));
   });
   risks = sortRisks(risks, col, dir);
   const ei = document.getElementById('ent-sort-inh'); if(ei) ei.innerHTML = sortArrow('enterprise','inh');
